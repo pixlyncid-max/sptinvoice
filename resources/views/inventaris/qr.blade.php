@@ -39,10 +39,10 @@ Cetak Label Barcode - {{ $inventaris->kode_barang }}
                 @php
                     $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
                 @endphp
-                <div class="overflow-hidden flex justify-center">
-                    {!! str_replace(chr(60).'?xml version="1.0" encoding="UTF-8"?>', '', $generator->getBarcode($inventaris->kode_barang, $generator::TYPE_CODE_128, 2.5, 60, 'black')) !!}
+                <div class="overflow-hidden flex justify-center p-2 bg-white rounded-lg">
+                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(150)->margin(0)->generate($inventaris->kode_barang) !!}
                 </div>
-                <div class="font-bold text-lg text-slate-800 tracking-wider">
+                <div class="font-bold text-lg text-slate-800 tracking-wider mt-2">
                     {{ $inventaris->kode_barang }}
                 </div>
             </div>
@@ -70,28 +70,21 @@ Cetak Label Barcode - {{ $inventaris->kode_barang }}
 <!-- Print-only hidden container for printing sticker labels -->
 <div id="print-label-section" class="hidden">
     <!-- Outer container for the sticker matching the blue design -->
-    <div style="width: 70mm; height: 25mm; box-sizing: border-box; font-family: 'Arial', sans-serif; background: url('{{ asset('storage/Background.png') }}') no-repeat center center; background-size: cover; color: white; margin: auto; position: relative; padding: 1mm 2mm;">
+    <div style="width: 70mm; height: 25mm; box-sizing: border-box; font-family: 'Arial', sans-serif; background: url('{{ asset('storage/Background.png') }}') no-repeat center center; background-size: cover; background-color: #0d47a1; color: white; margin: auto; position: relative; padding: 2mm; display: flex; align-items: center; border-radius: 2mm;">
         
-        <!-- Text content -->
-        <div style="text-align: center; margin-bottom: 0.8mm; position: relative; z-index: 10;">
-            <div style="font-size: 5pt; letter-spacing: 0.5px; opacity: 0.9;">PROPERTY OF:</div>
-            <div style="font-size: 9pt; font-weight: 900; margin: 0; letter-spacing: 0.5px; white-space: nowrap;">PT GANESHA ARTA ADIWANGSA</div>
-            <div style="font-size: 6pt; opacity: 0.9; margin-top: 0.2mm;">Asset No.</div>
+        <!-- Left: QR Code Box -->
+        <div style="background: white; border-radius: 1mm; padding: 1mm; display: flex; align-items: center; justify-content: center; width: 21mm; height: 21mm; box-sizing: border-box; flex-shrink: 0; margin-right: 2.5mm;">
+            <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(65)->margin(0)->generate($inventaris->kode_barang) !!}
+            </div>
         </div>
 
-        <!-- Barcode Box -->
-        <div style="background: white; border-radius: 1mm; padding: 1mm; text-align: center; color: #003682; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; position: relative; z-index: 10;">
-            
-            <!-- Generate Barcode SVG -->
-            <div style="width: 100%; height: 5mm; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 0.3mm;">
-                {!! str_replace(chr(60).'?xml version="1.0" encoding="UTF-8"?>', '', $generator->getBarcode($inventaris->kode_barang, $generator::TYPE_CODE_128, 1.2, 20, 'black')) !!}
-            </div>
-            
-            <!-- Asset Code Number below barcode -->
-            <div style="font-size: 7pt; font-weight: bold; font-family: 'Arial', sans-serif; letter-spacing: 0.5px;">
-                {{ $inventaris->kode_barang }}
-            </div>
-            
+        <!-- Right: Text content -->
+        <div style="display: flex; flex-direction: column; justify-content: center; flex-grow: 1; text-align: left; line-height: 1.1;">
+            <div style="font-size: 5pt; letter-spacing: 0.2px; opacity: 0.9; margin-bottom: 0.5mm;">PROPERTY OF:</div>
+            <div style="font-size: 8pt; font-weight: 900; letter-spacing: 0.2px; white-space: nowrap; margin-bottom: 1.5mm;">PT GANESHA ARTA ADIWANGSA</div>
+            <div style="font-size: 5pt; opacity: 0.9; margin-bottom: 0.5mm;">Asset No.</div>
+            <div style="font-size: 9pt; font-weight: bold; letter-spacing: 0.2px; white-space: nowrap;">{{ $inventaris->kode_barang }}</div>
         </div>
     </div>
 </div>

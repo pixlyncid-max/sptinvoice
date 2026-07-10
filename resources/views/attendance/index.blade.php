@@ -18,22 +18,28 @@
 
 @section('content')
 <div class="bg-white shadow-sm rounded-lg border border-slate-200 overflow-hidden">
-    <div class="px-4 py-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+    <div class="px-6 py-5 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-center gap-4">
         <form action="{{ route('attendance.index') }}" method="GET" class="flex items-center gap-2">
-            <select name="month" class="rounded-md border-slate-300 text-sm py-1">
+            <select name="month" class="rounded-md border-slate-300 text-sm py-1.5 focus:ring-primary focus:border-primary">
                 @for($m=1; $m<=12; $m++)
                     <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
                 @endfor
             </select>
-            <select name="year" class="rounded-md border-slate-300 text-sm py-1">
+            <select name="year" class="rounded-md border-slate-300 text-sm py-1.5 focus:ring-primary focus:border-primary">
                 @for($y=date('Y')-1; $y<=date('Y')+1; $y++)
                     <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
                 @endfor
             </select>
-            <button type="submit" class="bg-primary text-white px-3 py-1 rounded text-sm">Pilih</button>
+            <button type="submit" class="bg-[#1e293b] text-white px-4 py-1.5 rounded text-sm font-medium hover:bg-slate-800 transition">Pilih</button>
         </form>
-        <div class="text-xs text-slate-500">
-            H: Hadir | S: Sakit | S+: Sakit dengan Surat | I: Ijin | T1: Telat < 1j | T2: Telat > 1j | L: Libur
+        <div class="flex items-center gap-3 text-xs text-slate-600 font-medium flex-wrap justify-end">
+            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></span> Hadir</div>
+            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-red-100 text-red-600 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span> Sakit</div>
+            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-red-100 text-red-800 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span> S+: Sakit dengan Surat</div>
+            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold">I</span> Ijin</div>
+            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[9px] font-bold">T1</span> Telat < 1j</div>
+            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[9px] font-bold">T2</span> Telat > 1j</div>
+            <div class="flex items-center gap-1"><span class="text-slate-400 font-bold">L:</span> Libur</div>
         </div>
     </div>
 
@@ -41,12 +47,12 @@
         @csrf
         
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200 text-[10px]">
-                <thead class="bg-slate-100">
+            <table class="min-w-full divide-y divide-slate-200 text-[11px]">
+                <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-2 py-2 text-left font-bold text-slate-700 uppercase border-r">ID</th>
-                        <th class="px-2 py-2 text-left font-bold text-slate-700 uppercase border-r min-w-[120px]">Name</th>
-                        <th class="px-2 py-2 text-left font-bold text-slate-700 uppercase border-r min-w-[100px]">Position</th>
+                        <th class="px-3 py-3 text-left font-bold text-slate-700 uppercase border-r tracking-wider">ID</th>
+                        <th class="px-3 py-3 text-left font-bold text-slate-700 uppercase border-r min-w-[150px] tracking-wider">Name</th>
+                        <th class="px-3 py-3 text-left font-bold text-slate-700 uppercase border-r min-w-[120px] tracking-wider">Position</th>
                         @php
                             $indonesianDays = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
                         @endphp
@@ -54,20 +60,20 @@
                         @php
                             $isWeekend = $carbonDate->isWeekend();
                         @endphp
-                        <th class="px-1 py-1 text-center font-bold text-slate-700 border-r {{ $isWeekend ? 'bg-red-50 text-red-600' : '' }}">
-                            <div class="text-[7px] uppercase opacity-70">{{ $indonesianDays[$carbonDate->dayOfWeek] }}</div>
-                            <div class="text-[10px]">{{ $carbonDate->day }}</div>
+                        <th class="px-1 py-2 text-center font-bold border-r {{ $isWeekend ? 'bg-red-50 text-red-600' : 'text-slate-700' }}">
+                            <div class="text-[8px] uppercase tracking-wider mb-0.5">{{ $indonesianDays[$carbonDate->dayOfWeek] }}</div>
+                            <div class="text-sm font-black">{{ $carbonDate->day }}</div>
                         </th>
                         @endforeach
-                        <th class="px-2 py-2 text-center font-bold text-slate-700">Summary</th>
+                        <th class="px-3 py-3 text-center font-bold text-slate-700 bg-[#e2e8f0] uppercase tracking-wider">Summary</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
                     @foreach($employees as $employee)
-                    <tr>
-                        <td class="px-2 py-1 border-r text-slate-500">{{ str_pad($employee->id, 3, '0', STR_PAD_LEFT) }}</td>
-                        <td class="px-2 py-1 border-r font-medium text-slate-900">{{ $employee->nama }}</td>
-                        <td class="px-2 py-1 border-r text-slate-500">{{ $employee->jabatan }}</td>
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-3 py-2 border-r text-slate-500 font-mono text-[11px]">{{ str_pad($employee->id, 3, '0', STR_PAD_LEFT) }}</td>
+                        <td class="px-3 py-2 border-r font-bold text-slate-800 text-xs">{{ $employee->nama }}</td>
+                        <td class="px-3 py-2 border-r text-slate-500 text-[11px]">{{ $employee->jabatan }}</td>
                         @php
                             $empAttendances = $employee->attendances->keyBy(fn($a) => $a->tanggal->format('Y-m-d'));
                         @endphp
@@ -79,28 +85,83 @@
                             $status = $att ? $att->status : ($isWeekend ? 'libur' : '');
                             $lembur_jam = $att ? $att->lembur_jam : 0;
                             $sakit_surat = $att ? $att->sakit_dengan_surat : false;
+                            
+                            // Adjust status for sakit dengan surat so Alpine knows
+                            if($status === 'sakit' && $sakit_surat) {
+                                $status = 'sakit_surat';
+                            }
                         @endphp
-                        <td class="px-0 py-1 border-r text-center {{ $isWeekend ? 'bg-red-50/50' : '' }}">
-                            <div class="flex flex-col items-center gap-0.5 px-0.5">
-                                <select name="attendances[{{ $employee->id }}][{{ $dateStr }}][status]" class="w-full h-6 border-0 p-0 text-[8px] focus:ring-0 cursor-pointer bg-transparent text-center appearance-none {{ $status == 'libur' ? 'text-red-500 font-bold' : '' }}">
-                                    <option value=""></option>
-                                    <option value="hadir" {{ $status == 'hadir' ? 'selected' : '' }}>H</option>
-                                    <option value="sakit" {{ $status == 'sakit' && !$sakit_surat ? 'selected' : '' }}>S</option>
-                                    <option value="sakit_surat" {{ ($status == 'sakit' && $sakit_surat) || $status == 'sakit_surat' ? 'selected' : '' }}>S+</option>
-                                    <option value="ijin" {{ $status == 'ijin' ? 'selected' : '' }}>I</option>
-                                    <option value="telat_1" {{ $status == 'telat_1' ? 'selected' : '' }}>T1</option>
-                                    <option value="telat_2" {{ $status == 'telat_2' ? 'selected' : '' }}>T2</option>
-                                    <option value="libur" {{ $status == 'libur' ? 'selected' : '' }}>L</option>
-                                </select>
-                                <div class="flex items-center justify-center w-full px-1">
-                                    <input type="number" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" value="{{ $lembur_jam > 0 ? $lembur_jam : '' }}" min="0" max="4" class="w-full h-4 border border-slate-200 rounded-[2px] text-[7px] p-0 text-center focus:border-primary focus:ring-0" placeholder="L">
+                        <td class="px-0 py-0 border-r text-center {{ $isWeekend ? 'bg-red-50/30' : '' }} relative align-top" x-data="{ status: '{{ $status }}', lembur: '{{ $lembur_jam > 0 ? $lembur_jam : '' }}' }">
+                            <div class="flex flex-col items-center h-full">
+                                <!-- Top part: Status -->
+                                <div class="w-full h-[30px] flex items-center justify-center relative border-b border-slate-100">
+                                    <select name="attendances[{{ $employee->id }}][{{ $dateStr }}][status]" x-model="status" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                        <option value=""></option>
+                                        <option value="hadir">Hadir</option>
+                                        <option value="sakit">Sakit</option>
+                                        <option value="sakit_surat">Sakit Surat</option>
+                                        <option value="ijin">Ijin</option>
+                                        <option value="telat_1">Telat &lt; 1j</option>
+                                        <option value="telat_2">Telat &gt; 1j</option>
+                                        <option value="libur">Libur</option>
+                                    </select>
+                                    
+                                    <div class="pointer-events-none">
+                                        <template x-if="status == 'hadir'">
+                                            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></span>
+                                        </template>
+                                        <template x-if="status == 'sakit'">
+                                            <span class="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span>
+                                        </template>
+                                        <template x-if="status == 'sakit_surat'">
+                                            <span class="w-5 h-5 rounded-full bg-red-100 text-red-800 flex items-center justify-center"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span>
+                                        </template>
+                                        <template x-if="status == 'ijin'">
+                                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold">I</span>
+                                        </template>
+                                        <template x-if="status == 'telat_1'">
+                                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold">T1</span>
+                                        </template>
+                                        <template x-if="status == 'telat_2'">
+                                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold">T2</span>
+                                        </template>
+                                        <template x-if="status == 'libur' || (status == '' && {{ $isWeekend ? 'true' : 'false' }})">
+                                            <span class="text-slate-300 font-bold text-[10px]">L</span>
+                                        </template>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bottom part: Lembur -->
+                                <div class="w-full h-5 flex items-center justify-center bg-slate-50/50 relative">
+                                    <input type="number" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" x-model="lembur" min="0" max="4" class="absolute inset-0 w-full h-full opacity-0 cursor-text z-10" placeholder="L">
+                                    <div class="pointer-events-none text-[9px] font-bold" :class="lembur ? 'text-[#1e293b]' : 'text-slate-300'">
+                                        <span x-text="lembur ? lembur + 'h' : 'L'"></span>
+                                    </div>
                                 </div>
                             </div>
                         </td>
                         @endforeach
-                        <td class="px-2 py-1 text-center whitespace-nowrap bg-slate-50">
-                            <span class="text-emerald-600 font-bold">{{ $employee->attendances->where('status', 'hadir')->count() }}H</span>
-                            <span class="text-amber-600 font-bold">{{ $employee->attendances->whereIn('status', ['telat_1', 'telat_2'])->count() }}T</span>
+                        <td class="px-3 py-2 bg-[#f1f5f9] border-l border-slate-200 align-top">
+                            <div class="flex flex-col gap-1.5 text-[10px]">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="font-bold text-slate-800">{{ $employee->attendances->where('status', 'hadir')->count() }}H</span>
+                                    @if($employee->attendances->sum('lembur_jam') > 0)
+                                        <span class="font-bold text-[#1e293b] bg-slate-200/80 px-1 rounded ml-1">{{ $employee->attendances->sum('lembur_jam') }}H OT</span>
+                                    @endif
+                                </div>
+                                @if($employee->attendances->whereIn('status', ['telat_1', 'telat_2'])->count() > 0)
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[9px] font-bold">T</span>
+                                    <span class="font-bold text-slate-600">{{ $employee->attendances->whereIn('status', ['telat_1', 'telat_2'])->count() }} Telat</span>
+                                </div>
+                                @else
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-4 h-4 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-[9px]"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></span>
+                                    <span class="font-bold text-slate-600">Hadir</span>
+                                </div>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @endforeach
