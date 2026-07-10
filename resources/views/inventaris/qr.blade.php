@@ -40,7 +40,7 @@ Cetak Label Barcode - {{ $inventaris->kode_barang }}
                     $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
                 @endphp
                 <div class="overflow-hidden flex justify-center p-2 bg-white rounded-lg">
-                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(150)->margin(0)->generate($inventaris->kode_barang) !!}
+                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(150)->margin(0)->generate(route('inventaris.qr-scan', $inventaris->kode_barang)) !!}
                 </div>
                 <div class="font-bold text-lg text-slate-800 tracking-wider mt-2">
                     {{ $inventaris->kode_barang }}
@@ -75,16 +75,16 @@ Cetak Label Barcode - {{ $inventaris->kode_barang }}
         <!-- Left: QR Code Box -->
         <div style="background: white; border-radius: 1mm; padding: 1mm; display: flex; align-items: center; justify-content: center; width: 21mm; height: 21mm; box-sizing: border-box; flex-shrink: 0; margin-right: 2.5mm;">
             <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(65)->margin(0)->generate($inventaris->kode_barang) !!}
+                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(65)->margin(0)->generate(route('inventaris.qr-scan', $inventaris->kode_barang)) !!}
             </div>
         </div>
 
         <!-- Right: Text content -->
         <div style="display: flex; flex-direction: column; justify-content: center; flex-grow: 1; text-align: left; line-height: 1.1;">
-            <div style="font-size: 5pt; letter-spacing: 0.2px; opacity: 0.9; margin-bottom: 0.5mm;">PROPERTY OF:</div>
-            <div style="font-size: 8pt; font-weight: 900; letter-spacing: 0.2px; white-space: nowrap; margin-bottom: 1.5mm;">PT GANESHA ARTA ADIWANGSA</div>
-            <div style="font-size: 5pt; opacity: 0.9; margin-bottom: 0.5mm;">Asset No.</div>
-            <div style="font-size: 9pt; font-weight: bold; letter-spacing: 0.2px; white-space: nowrap;">{{ $inventaris->kode_barang }}</div>
+            <div style="font-size: 4pt; letter-spacing: 0.2px; opacity: 0.9; margin-bottom: 0.5mm;">PROPERTY OF:</div>
+            <div style="font-size: 6.5pt; font-weight: 900; letter-spacing: 0.2px; white-space: nowrap; margin-bottom: 1.5mm;">PT GANESHA ARTA ADIWANGSA</div>
+            <div style="font-size: 4pt; opacity: 0.9; margin-bottom: 0.5mm;">Asset No.</div>
+            <div style="font-size: 8pt; font-weight: bold; letter-spacing: 0.2px; white-space: nowrap;">{{ $inventaris->kode_barang }}</div>
         </div>
     </div>
 </div>
