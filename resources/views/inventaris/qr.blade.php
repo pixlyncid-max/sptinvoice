@@ -99,11 +99,12 @@
                 style="display: flex; flex-direction: column; justify-content: center; flex-grow: 1; text-align: left; line-height: 1.1;">
                 <div style="font-size: 4pt; letter-spacing: 0.2px; opacity: 0.9; margin-bottom: 0.5mm;">PROPERTY OF:</div>
                 <div
-                    style="font-size: 6.5pt; font-weight: bold; letter-spacing: 0.2px; white-space: nowrap; margin-bottom: 1.5mm;">
+                    style="font-size: 7pt; font-weight: bold; letter-spacing: 0.2px; white-space: nowrap; margin-bottom: 1.5mm;">
                     PT GANESHA ARTA ADIWANGSA</div>
                 <div style="font-size: 4pt; opacity: 0.9; margin-bottom: 0.5mm;">Asset No.</div>
-                <div style="font-size: 8pt; font-weight: bold; letter-spacing: 0.2px; white-space: nowrap;">
-                    {{ $inventaris->kode_barang }}</div>
+                <div style="font-size: 7pt; font-weight: bold; letter-spacing: 0.2px; white-space: nowrap;">
+                    {{ $inventaris->kode_barang }}
+                </div>
             </div>
         </div>
     </div>
