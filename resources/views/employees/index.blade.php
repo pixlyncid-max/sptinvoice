@@ -3,6 +3,9 @@
 @section('title', 'Manajemen Karyawan')
 
 @section('actions')
+<a href="{{ route('employees.template') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 transition duration-150 mr-2">
+    Unduh Template
+</a>
 <button @click="$dispatch('open-modal', 'add-employee')" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">
     + Tambah Karyawan
 </button>

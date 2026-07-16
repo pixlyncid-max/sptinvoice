@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('rate-cards-items', [RateCardController::class, 'getItems'])->name('rate-cards.items');
 
     // Karyawan (Employees)
+    Route::get('employees/template', [EmployeeController::class, 'downloadTemplate'])->name('employees.template');
     Route::resource('employees', EmployeeController::class)->except(['show', 'create', 'edit']);
 
     // Absensi (Attendance)

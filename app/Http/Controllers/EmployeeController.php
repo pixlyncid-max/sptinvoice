@@ -15,6 +15,11 @@ class EmployeeController extends Controller
         return view('employees.index', compact('employees', 'divisions', 'positions'));
     }
 
+    public function downloadTemplate()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\EmployeeTemplateExport, 'template_karyawan.xlsx');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
