@@ -110,6 +110,12 @@ class InventarisController extends Controller
         return view('inventaris.qr', compact('inventaris'));
     }
 
+    public function printAllQr()
+    {
+        $inventarisList = Inventaris::all();
+        return view('inventaris.print-all-qr', compact('inventarisList'));
+    }
+
     public function qrScan($kode)
     {
         $inventaris = Inventaris::where('kode_barang', $kode)->with('employee')->firstOrFail();

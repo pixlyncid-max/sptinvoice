@@ -78,6 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Inventaris
     Route::get('inventaris/scan', [InventarisController::class, 'scanCamera'])->name('inventaris.scan');
     Route::get('inventaris/code/{kode}', [InventarisController::class, 'showByCode'])->name('inventaris.by-code');
+    Route::get('inventaris/print-all-qr', [InventarisController::class, 'printAllQr'])->name('inventaris.print-all-qr');
     Route::resource('inventaris', InventarisController::class)->parameters([
         'inventaris' => 'inventaris'
     ]);

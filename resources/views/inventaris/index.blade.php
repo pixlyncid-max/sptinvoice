@@ -4,9 +4,9 @@
 
 @section('actions')
 <div class="flex gap-2">
-    <a href="{{ route('inventaris.scan') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-semibold rounded-md shadow-xs text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition border-indigo-200">
-        <svg class="w-4 h-4 mr-1.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m0 11v1m5-6h-1m-11 0h1m2-5a7 7 0 1114 0 7 7 0 01-14 0z" /><circle cx="12" cy="12" r="2" /></svg>
-        Scan Kamera QR
+    <a href="{{ route('inventaris.print-all-qr') }}" target="_blank" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-semibold rounded-md shadow-xs text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition border-indigo-200">
+        <svg class="w-4 h-4 mr-1.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+        Cetak Semua QR
     </a>
     <a href="{{ route('inventaris.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
         + Tambah Barang
