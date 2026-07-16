@@ -3,6 +3,9 @@
 @section('title', 'Manajemen Karyawan')
 
 @section('actions')
+<button @click="$dispatch('open-modal', 'import-employee')" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 transition duration-150 mr-2">
+    Impor Data
+</button>
 <a href="{{ route('employees.template') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 transition duration-150 mr-2">
     Unduh Template
 </a>
@@ -190,6 +193,26 @@
         <div class="mt-10 flex justify-end gap-3 border-t pt-6">
             <button type="button" @click="show = false" class="px-6 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Batal</button>
             <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-md">Simpan</button>
+        </div>
+    </form>
+</x-modal>
+
+{{-- Import Modal --}}
+<x-modal name="import-employee" maxWidth="2xl">
+    <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-lg">
+        <h2 class="text-lg font-bold text-slate-800">Impor Data Karyawan</h2>
+        <button @click="show = false" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+    </div>
+    <form action="{{ route('employees.import') }}" method="POST" enctype="multipart/form-data" class="p-8">
+        @csrf
+        <div class="mb-6">
+            <p class="text-sm text-slate-600 mb-4">Silakan unggah file Excel (.xlsx atau .csv) yang sudah diisi sesuai dengan template. Anda bisa mengunduh template terlebih dahulu jika belum memilikinya.</p>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">File Excel</label>
+            <input type="file" name="file" required accept=".xlsx, .xls, .csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-300 rounded-lg">
+        </div>
+        <div class="flex justify-end gap-3 border-t pt-6">
+            <button type="button" @click="show = false" class="px-6 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Batal</button>
+            <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-md">Mulai Impor</button>
         </div>
     </form>
 </x-modal>

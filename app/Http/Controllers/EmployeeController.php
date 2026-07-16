@@ -17,7 +17,21 @@ class EmployeeController extends Controller
 
     public function downloadTemplate()
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\EmployeeTemplateExport, 'template_karyawan.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\EmployeeTemplateExport(), 'template_karyawan.xlsx');
+    }
+
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\EmployeeImport(), $request->file('file'));
+            return redirect()->route('employees.index')->with('success', 'Data Karyawan berhasil diimpor.');
+        } catch (\Exception $e) {
+            return redirect()->route('employees.index')->with('error', 'Gagal mengimpor data. Pastikan format file sesuai dengan template. Error: ' . $e->getMessage());
+        }
     }
 
     public function store(Request $request)
