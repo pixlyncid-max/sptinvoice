@@ -72,10 +72,6 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div>
-                                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Grade</label>
-                                            <input type="text" name="grade" value="{{ $employee->grade }}" class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2.5">
-                                        </div>
                                     </div>
                                     <div class="space-y-5">
                                         <h3 class="text-sm font-bold text-indigo-600 uppercase tracking-widest border-b pb-2">Penggajian & Bank</h3>
@@ -155,10 +151,6 @@
                             <option value="{{ $pos->id }}">{{ $pos->name }}</option>
                         @endforeach
                     </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Grade</label>
-                    <input type="text" name="grade" class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2.5">
                 </div>
             </div>
             <div class="space-y-5">

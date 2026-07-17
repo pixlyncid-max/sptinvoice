@@ -110,7 +110,6 @@
                         </div>
                         <div class="ml-3">
                             <div class="text-sm font-bold text-slate-900">{{ $inventaris->employee->nama }}</div>
-                            <div class="text-xs text-slate-500 font-mono">NIK: {{ $inventaris->employee->nik }}</div>
                             <div class="text-xs text-slate-600 mt-0.5">
                                 {{ $inventaris->employee->position->nama ?? '' }} • {{ $inventaris->employee->division->nama ?? '' }}
                             </div>

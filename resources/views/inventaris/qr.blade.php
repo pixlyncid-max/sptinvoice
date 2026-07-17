@@ -84,7 +84,7 @@
     <div id="print-label-section" class="hidden">
         <!-- Outer container for the sticker matching the blue design -->
         <div
-            style="width: 70mm; height: 25mm; box-sizing: border-box; font-family: 'Arial', sans-serif; background: url('{{ asset('storage/Background.png') }}') no-repeat center center; background-size: cover; background-color: #0d47a1; color: white; margin: auto; position: relative; padding: 2mm; display: flex; align-items: center; border-radius: 2mm;">
+            style="width: 70mm; height: 25mm; box-sizing: border-box; font-family: 'Arial', sans-serif; background: url('{{ asset('storage/back.png') }}') no-repeat center center; background-size: cover; background-color: #0d47a1; color: white; margin: auto; position: relative; padding: 2mm; display: flex; align-items: center; border-radius: 2mm;">
 
             <!-- Left: QR Code Box -->
             <div
