@@ -79,9 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('inventaris/scan', [InventarisController::class, 'scanCamera'])->name('inventaris.scan');
     Route::get('inventaris/code/{kode}', [InventarisController::class, 'showByCode'])->name('inventaris.by-code');
     Route::get('inventaris/print-all-qr', [InventarisController::class, 'printAllQr'])->name('inventaris.print-all-qr');
-    Route::resource('inventaris', InventarisController::class)->parameters([
-        'inventaris' => 'inventaris'
-    ]);
+    Route::resource('inventaris', \App\Http\Controllers\InventarisController::class);
+    Route::resource('inventaris-categories', \App\Http\Controllers\InventarisCategoryController::class)->except(['create', 'show', 'edit']);
     Route::get('inventaris/{inventaris}/qr', [InventarisController::class, 'showQr'])->name('inventaris.qr');
 
     // Superadmin Routes

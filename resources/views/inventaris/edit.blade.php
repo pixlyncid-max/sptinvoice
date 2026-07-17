@@ -30,15 +30,14 @@
 
                 <!-- Kategori -->
                 <div class="col-span-1">
-                    <label for="kategori" class="block text-sm font-medium text-slate-700">Kategori <span class="text-red-500">*</span></label>
-                    <select name="kategori" id="kategori" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border bg-white @error('kategori') border-red-500 @enderror" required>
+                    <label for="inventaris_category_id" class="block text-sm font-medium text-slate-700">Kategori <span class="text-red-500">*</span></label>
+                    <select name="inventaris_category_id" id="inventaris_category_id" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border bg-white @error('inventaris_category_id') border-red-500 @enderror" required>
                         <option value="">-- Pilih Kategori --</option>
-                        <option value="elektronik" {{ old('kategori', $inventaris->kategori) == 'elektronik' ? 'selected' : '' }}>Elektronik</option>
-                        <option value="furniture" {{ old('kategori', $inventaris->kategori) == 'furniture' ? 'selected' : '' }}>Furniture</option>
-                        <option value="alat_kerja" {{ old('kategori', $inventaris->kategori) == 'alat_kerja' ? 'selected' : '' }}>Alat Kerja</option>
-                        <option value="kendaraan" {{ old('kategori', $inventaris->kategori) == 'kendaraan' ? 'selected' : '' }}>Kendaraan</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('inventaris_category_id', $inventaris->inventaris_category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
                     </select>
-                    @error('kategori')
+                    @error('inventaris_category_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

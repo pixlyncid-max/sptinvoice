@@ -41,17 +41,8 @@
             <div class="sm:col-span-1">
                 <dt class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Kategori</dt>
                 <dd class="mt-1 text-sm">
-                    @php
-                        $catColors = [
-                            'elektronik' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                            'furniture' => 'bg-amber-50 text-amber-700 border-amber-200',
-                            'alat_kerja' => 'bg-sky-50 text-sky-700 border-sky-200',
-                            'kendaraan' => 'bg-purple-50 text-purple-700 border-purple-200'
-                        ];
-                        $catColor = $catColors[$inventaris->kategori] ?? 'bg-slate-50 text-slate-700 border-slate-200';
-                    @endphp
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $catColor }}">
-                        {{ $inventaris->kategori_label }}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-indigo-50 text-indigo-700 border-indigo-200">
+                        {{ $inventaris->category->name ?? '-' }}
                     </span>
                 </dd>
             </div>

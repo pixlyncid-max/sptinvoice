@@ -35,10 +35,9 @@
                 <label for="kategori" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Kategori</label>
                 <select name="kategori" id="kategori" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border bg-white">
                     <option value="">Semua Kategori</option>
-                    <option value="elektronik" {{ request('kategori') == 'elektronik' ? 'selected' : '' }}>Elektronik</option>
-                    <option value="furniture" {{ request('kategori') == 'furniture' ? 'selected' : '' }}>Furniture</option>
-                    <option value="alat_kerja" {{ request('kategori') == 'alat_kerja' ? 'selected' : '' }}>Alat Kerja</option>
-                    <option value="kendaraan" {{ request('kategori') == 'kendaraan' ? 'selected' : '' }}>Kendaraan</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('kategori') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -94,17 +93,8 @@
                         <div class="text-sm text-slate-500">{{ $item->nama_merk ?: '-' }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @php
-                            $catColors = [
-                                'elektronik' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                                'furniture' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                'alat_kerja' => 'bg-sky-50 text-sky-700 border-sky-200',
-                                'kendaraan' => 'bg-purple-50 text-purple-700 border-purple-200'
-                            ];
-                            $catColor = $catColors[$item->kategori] ?? 'bg-slate-50 text-slate-700 border-slate-200';
-                        @endphp
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $catColor }}">
-                            {{ $item->kategori_label }}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-indigo-50 text-indigo-700 border-indigo-200">
+                            {{ $item->category->name ?? '-' }}
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">

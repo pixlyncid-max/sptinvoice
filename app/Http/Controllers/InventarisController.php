@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventaris;
 use App\Models\Employee;
+use App\Models\InventarisCategory;
 use Illuminate\Http\Request;
 
 class InventarisController extends Controller
@@ -22,7 +23,7 @@ class InventarisController extends Controller
         }
 
         if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
+            $query->where('inventaris_category_id', $request->kategori);
         }
 
         if ($request->filled('kondisi')) {
@@ -31,19 +32,21 @@ class InventarisController extends Controller
 
         $inventaris = $query->latest()->paginate(10)->withQueryString();
 
-        return view('inventaris.index', compact('inventaris'));
+        $categories = InventarisCategory::orderBy('name', 'asc')->get();
+        return view('inventaris.index', compact('inventaris', 'categories'));
     }
 
     public function create()
     {
         $employees = Employee::orderBy('nama', 'asc')->get();
-        return view('inventaris.create', compact('employees'));
+        $categories = InventarisCategory::orderBy('name', 'asc')->get();
+        return view('inventaris.create', compact('employees', 'categories'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kategori' => 'required|in:elektronik,furniture,alat_kerja,kendaraan',
+            'inventaris_category_id' => 'required|exists:inventaris_categories,id',
             'nama_barang' => 'required|string|max:255',
             'nama_merk' => 'nullable|string|max:255',
             'tanggal_beli' => 'required|date',
@@ -52,7 +55,7 @@ class InventarisController extends Controller
         ]);
 
         // Generate the kode_barang right before saving to prevent collision
-        $validated['kode_barang'] = Inventaris::generateKode($validated['kategori'], $validated['tanggal_beli']);
+        $validated['kode_barang'] = Inventaris::generateKode($validated['inventaris_category_id'], $validated['tanggal_beli']);
 
         Inventaris::create($validated);
 
@@ -68,13 +71,14 @@ class InventarisController extends Controller
     public function edit(Inventaris $inventaris)
     {
         $employees = Employee::orderBy('nama', 'asc')->get();
-        return view('inventaris.edit', compact('inventaris', 'employees'));
+        $categories = InventarisCategory::orderBy('name', 'asc')->get();
+        return view('inventaris.edit', compact('inventaris', 'employees', 'categories'));
     }
 
     public function update(Request $request, Inventaris $inventaris)
     {
         $validated = $request->validate([
-            'kategori' => 'required|in:elektronik,furniture,alat_kerja,kendaraan',
+            'inventaris_category_id' => 'required|exists:inventaris_categories,id',
             'nama_barang' => 'required|string|max:255',
             'nama_merk' => 'nullable|string|max:255',
             'tanggal_beli' => 'required|date',

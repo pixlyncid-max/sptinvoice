@@ -10,7 +10,7 @@ class Inventaris extends Model
 
     protected $fillable = [
         'kode_barang',
-        'kategori',
+        'inventaris_category_id',
         'nama_barang',
         'nama_merk',
         'tanggal_beli',
@@ -22,6 +22,11 @@ class Inventaris extends Model
         'tanggal_beli' => 'date',
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(InventarisCategory::class, 'inventaris_category_id');
+    }
+
     public function employee()
     {
         return $this->belongsTo(Employee::class);
@@ -30,16 +35,12 @@ class Inventaris extends Model
     /**
      * Generate kode barang berikutnya (GAA-[kategori_char]-[nomor]-[tahun])
      */
-    public static function generateKode(string $kategori = 'elektronik', $tanggal_beli = null): string
+    public static function generateKode($categoryId, $tanggal_beli = null): string
     {
-        // 1. Get first letter of category (uppercase)
-        $char = match ($kategori) {
-            'elektronik' => 'E',
-            'furniture' => 'F',
-            'alat_kerja' => 'A',
-            'kendaraan' => 'K',
-            default => strtoupper(substr($kategori, 0, 1)),
-        };
+        $category = InventarisCategory::find($categoryId);
+        
+        // 1. Get prefix from category
+        $char = $category ? ($category->prefix ?? strtoupper(substr($category->name, 0, 1))) : 'U';
 
         // 2. Get year
         $year = date('Y');
@@ -74,13 +75,7 @@ class Inventaris extends Model
      */
     public function getKategoriLabelAttribute(): string
     {
-        return match ($this->kategori) {
-            'elektronik' => 'Elektronik',
-            'furniture' => 'Furniture',
-            'alat_kerja' => 'Alat Kerja',
-            'kendaraan' => 'Kendaraan',
-            default => $this->kategori,
-        };
+        return $this->category ? $this->category->name : '-';
     }
 
     /**
