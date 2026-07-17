@@ -36,7 +36,6 @@ class EmployeeImport implements ToModel, WithHeadingRow
             'nik' => $row['nik'] ?? null,
             'position_id' => $position ? $position->id : null,
             'jabatan' => $position ? $position->name : null,
-            'grade' => $row['grade'] ?? null,
             'tgl_masuk' => $tglMasuk,
             'bank' => $row['bank'] ?? null,
             'no_rekening' => $row['no_rekening'] ?? null,

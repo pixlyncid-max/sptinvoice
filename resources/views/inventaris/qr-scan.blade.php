@@ -110,9 +110,11 @@
                         </div>
                         <div class="ml-3">
                             <div class="text-sm font-bold text-slate-900">{{ $inventaris->employee->nama }}</div>
+                            @if(!empty($inventaris->employee->position->nama) || !empty($inventaris->employee->division->nama))
                             <div class="text-xs text-slate-600 mt-0.5">
-                                {{ $inventaris->employee->position->nama ?? '' }} • {{ $inventaris->employee->division->nama ?? '' }}
+                                {{ implode(' • ', array_filter([$inventaris->employee->position->nama ?? null, $inventaris->employee->division->nama ?? null])) }}
                             </div>
+                            @endif
                         </div>
                     </div>
                 @else
