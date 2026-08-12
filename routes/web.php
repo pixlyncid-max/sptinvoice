@@ -32,6 +32,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Data GAA (Accessible by all roles: Admin, Superadmin, Karyawan)
+    Route::get('gaa/template', [GaaDataController::class, 'downloadTemplate'])->name('gaa.template');
+    Route::post('gaa/import', [GaaDataController::class, 'importExcel'])->name('gaa.import');
     Route::resource('gaa', GaaDataController::class);
 
     // Routes blocked for Karyawan role (Admin & Superadmin only)

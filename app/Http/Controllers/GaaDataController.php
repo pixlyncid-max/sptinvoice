@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GaaDataTemplateExport;
+use App\Imports\GaaDataImport;
 use App\Models\GaaData;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GaaDataController extends Controller
 {
@@ -33,6 +36,31 @@ class GaaDataController extends Controller
         $gaaList = $query->orderBy('nama_perusahaan', 'asc')->paginate(15)->withQueryString();
 
         return view('gaa.index', compact('gaaList'));
+    }
+
+    /**
+     * Download Excel template for Data GAA.
+     */
+    public function downloadTemplate()
+    {
+        return Excel::download(new GaaDataTemplateExport(), 'Template-Data-GAA.xlsx');
+    }
+
+    /**
+     * Import Data GAA from Excel file.
+     */
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls,csv|max:5120'
+        ]);
+
+        try {
+            Excel::import(new GaaDataImport(), $request->file('file_excel'));
+            return redirect()->route('gaa.index')->with('success', 'Data GAA berhasil diimpor!');
+        } catch (\Exception $e) {
+            return redirect()->route('gaa.index')->with('error', 'Gagal mengimpor data GAA: ' . $e->getMessage());
+        }
     }
 
     /**

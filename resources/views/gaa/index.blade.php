@@ -3,9 +3,19 @@
 @section('title', 'Data GAA')
 
 @section('actions')
-<a href="{{ route('gaa.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-    + Tambah Data GAA
-</a>
+<div class="flex flex-wrap gap-2" x-data>
+    <a href="{{ route('gaa.template') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        <svg class="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+        Download Template
+    </a>
+    <button type="button" @click="$dispatch('open-import-modal')" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        <svg class="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+        Import Excel
+    </button>
+    <a href="{{ route('gaa.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        + Tambah Data GAA
+    </a>
+</div>
 @endsection
 
 @section('content')
@@ -148,5 +158,53 @@
         {{ $gaaList->links() }}
     </div>
     @endif
+</div>
+
+<!-- Modal Import Excel -->
+<div x-data="{ open: false }" 
+     x-on:open-import-modal.window="open = true" 
+     x-on:keydown.escape.window="open = false"
+     x-show="open" 
+     style="display: none;"
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+        <div x-show="open" 
+             class="fixed inset-0 bg-slate-900/50 transition-opacity z-40" 
+             aria-hidden="true" @click="open = false"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div x-show="open" 
+             class="relative z-50 inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            
+            <form action="{{ route('gaa.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-semibold text-slate-900" id="modal-title">Import Data GAA via Excel</h3>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-slate-700">Pilih File Excel (.xlsx, .xls, .csv)</label>
+                                <input type="file" name="file_excel" accept=".xlsx, .xls, .csv" class="mt-2 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark" required>
+                                <p class="mt-3 text-xs text-slate-500 leading-relaxed">
+                                    Format file Excel harus memiliki header kolom: <strong>Nama Perusahaan, Nomor NPWP, KPP, Email, Password Email, DJP User, DJP Password, User NPWP 16, PIC NIK, PIC Nama, Coretax Password, Keterangan, Checklist Coretax</strong>.
+                                    <br>Gunakan tombol <strong>Download Template</strong> untuk mengunduh contoh format file.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-primary-dark focus:outline-none sm:w-auto sm:text-sm">
+                        Proses Import
+                    </button>
+                    <button type="button" @click="open = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                        Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
