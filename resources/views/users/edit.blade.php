@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Admin')
+@section('title', 'Edit User')
 
 @section('actions')
 <a href="{{ route('users.index') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50">
@@ -33,6 +33,18 @@
                 </div>
 
                 <div class="col-span-1 sm:col-span-2 lg:col-span-2">
+                    <label for="role" class="block text-sm font-medium text-slate-700">Role / Hak Akses <span class="text-red-500">*</span></label>
+                    <select name="role" id="role" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('role') border-red-500 @enderror" required>
+                        <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin (Akses Penuh)</option>
+                        <option value="karyawan" {{ old('role', $user->role) == 'karyawan' ? 'selected' : '' }}>Karyawan (Akses Khusus Data GAA)</option>
+                        <option value="superadmin" {{ old('role', $user->role) == 'superadmin' ? 'selected' : '' }}>Superadmin (Akses Pengaturan & Master Data)</option>
+                    </select>
+                    @error('role')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="col-span-1 sm:col-span-2 lg:col-span-2">
                     <div class="mt-4 border-t border-slate-200 pt-6">
                         <h4 class="text-sm font-medium text-slate-900 mb-4">Ubah Password <span class="text-slate-500 font-normal">(Opsional, biarkan kosong jika tidak ingin mengubah password)</span></h4>
                     </div>
@@ -55,7 +67,7 @@
         </div>
         <div class="px-4 py-3 bg-slate-50 text-right sm:px-6 border-t border-slate-200 rounded-b-lg">
             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                Perbarui Admin
+                Perbarui User
             </button>
         </div>
     </form>

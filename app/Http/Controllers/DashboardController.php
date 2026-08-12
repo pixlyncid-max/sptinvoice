@@ -11,6 +11,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (auth()->user() && auth()->user()->isKaryawan()) {
+            return redirect()->route('gaa.index');
+        }
+
         $totalClients = Client::count();
         $totalInvoices = Invoice::count();
         $invoicesByStatus = Invoice::selectRaw('status, count(*) as total')

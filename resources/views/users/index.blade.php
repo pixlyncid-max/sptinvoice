@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Admin')
+@section('title', 'Kelola User & Admin')
 
 @section('actions')
 <a href="{{ route('users.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-    + Tambah Admin
+    + Tambah User
 </a>
 @endsection
 
@@ -37,6 +37,7 @@
                 <tr>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">Role</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Tanggal Ditambahkan</th>
                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
                 </tr>
@@ -59,6 +60,21 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-slate-900">{{ $user->email }}</div>
                     </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        @if($user->role === 'superadmin')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                Superadmin
+                            </span>
+                        @elseif($user->role === 'karyawan')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                Karyawan
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                Admin
+                            </span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                         {{ $user->created_at->format('d M Y') }}
                     </td>
@@ -67,7 +83,7 @@
                             <a href="{{ route('users.edit', $user) }}" class="text-emerald-600 hover:text-emerald-900 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition">Edit</a>
                             
                             @if(auth()->id() !== $user->id)
-                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus admin ini?');">
+                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-900 px-2 py-1 bg-red-50 hover:bg-red-100 rounded transition">Hapus</button>
@@ -80,11 +96,11 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-10 text-center text-slate-500">
+                    <td colspan="5" class="px-6 py-10 text-center text-slate-500">
                         <svg class="mx-auto h-12 w-12 text-slate-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        Belum ada data admin lain.
+                        Belum ada data user.
                     </td>
                 </tr>
                 @endforelse
