@@ -144,4 +144,14 @@ class GaaDataController extends Controller
 
         return redirect()->route('gaa.index')->with('success', 'Data GAA berhasil dihapus!');
     }
+
+    /**
+     * Remove all resources from storage.
+     */
+    public function destroyAll()
+    {
+        GaaData::query()->delete();
+
+        return redirect()->route('gaa.index')->with('success', 'Semua Data GAA berhasil dihapus!');
+    }
 }
