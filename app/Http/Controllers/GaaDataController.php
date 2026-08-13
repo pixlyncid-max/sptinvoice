@@ -33,7 +33,12 @@ class GaaDataController extends Controller
             $query->where('checklist_coretax', $request->checklist_coretax);
         }
 
-        $gaaList = $query->orderBy('nama_perusahaan', 'asc')->paginate(15)->withQueryString();
+        $perPage = $request->get('per_page', 15);
+        if ($perPage === 'all') {
+            $gaaList = $query->orderBy('nama_perusahaan', 'asc')->paginate($query->count() ?: 1)->withQueryString();
+        } else {
+            $gaaList = $query->orderBy('nama_perusahaan', 'asc')->paginate((int) $perPage)->withQueryString();
+        }
 
         return view('gaa.index', compact('gaaList'));
     }

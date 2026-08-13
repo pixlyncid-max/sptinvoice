@@ -49,11 +49,21 @@
                 </select>
             </div>
 
+            <div class="w-44">
+                <select name="per_page" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border font-medium text-slate-700 bg-slate-50" onchange="this.form.submit()" title="Tampilkan Jumlah Data">
+                    <option value="15" {{ request('per_page', '15') == '15' ? 'selected' : '' }}>Tampil: 15 Per Hal</option>
+                    <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>Tampil: 25 Per Hal</option>
+                    <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>Tampil: 50 Per Hal</option>
+                    <option value="100" {{ request('per_page') == '100' ? 'selected' : '' }}>Tampil: 100 Per Hal</option>
+                    <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>⚡ Tampilkan Semua Data</option>
+                </select>
+            </div>
+
             <button type="submit" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
                 Cari
             </button>
 
-            @if(request('search') || request('checklist_coretax'))
+            @if(request('search') || request('checklist_coretax') || request('per_page'))
             <a href="{{ route('gaa.index') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
                 Reset
             </a>
