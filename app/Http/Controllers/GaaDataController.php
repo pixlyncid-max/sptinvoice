@@ -154,4 +154,24 @@ class GaaDataController extends Controller
 
         return redirect()->route('gaa.index')->with('success', 'Semua Data GAA berhasil dihapus!');
     }
+
+    /**
+     * Toggle checklist_coretax status via AJAX/Form.
+     */
+    public function toggleChecklist($id)
+    {
+        $gaa = GaaData::findOrFail($id);
+        $gaa->checklist_coretax = ($gaa->checklist_coretax === 'Sudah') ? 'Belum' : 'Sudah';
+        $gaa->save();
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'checklist_coretax' => $gaa->checklist_coretax,
+                'message' => 'Status Checklist Coretax berhasil diperbarui.'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Status Checklist Coretax berhasil diperbarui!');
+    }
 }

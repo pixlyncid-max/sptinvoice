@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Data GAA (Accessible by all roles: Admin, Superadmin, Karyawan)
     Route::get('gaa/template', [GaaDataController::class, 'downloadTemplate'])->name('gaa.template');
     Route::post('gaa/import', [GaaDataController::class, 'importExcel'])->name('gaa.import');
+    Route::patch('gaa/{gaa}/toggle-checklist', [GaaDataController::class, 'toggleChecklist'])->name('gaa.toggle-checklist');
     Route::delete('gaa/destroy-all', [GaaDataController::class, 'destroyAll'])->name('gaa.destroy-all');
     Route::resource('gaa', GaaDataController::class);
 

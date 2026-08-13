@@ -127,15 +127,25 @@
                         {{ $gaa->keterangan ?: '-' }}
                     </td>
                     <td class="px-4 py-3 border border-slate-200 text-center whitespace-nowrap">
-                        @if($gaa->checklist_coretax == 'Sudah')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                Sudah
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                Belum
-                            </span>
-                        @endif
+                        <form action="{{ route('gaa.toggle-checklist', $gaa->id) }}" method="POST" class="inline-block form-toggle-checklist" data-id="{{ $gaa->id }}">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" 
+                                    title="Klik untuk mengubah status (Sudah / Belum)" 
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-150 transform hover:scale-105 cursor-pointer border {{ $gaa->checklist_coretax == 'Sudah' ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200' : 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200' }}">
+                                @if($gaa->checklist_coretax == 'Sudah')
+                                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <span>Sudah</span>
+                                @else
+                                    <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    <span>Belum</span>
+                                @endif
+                            </button>
+                        </form>
                     </td>
                     <td class="px-4 py-3 border border-slate-200 text-right whitespace-nowrap">
                         <div class="flex justify-end gap-2">
@@ -218,3 +228,53 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.form-toggle-checklist').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = form.querySelector('button');
+            const originalContent = btn.innerHTML;
+            btn.style.opacity = '0.6';
+            btn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    _method: 'PATCH'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.checklist_coretax === 'Sudah') {
+                        btn.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-150 transform hover:scale-105 cursor-pointer border bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200';
+                        btn.innerHTML = `<svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Sudah</span>`;
+                    } else {
+                        btn.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-150 transform hover:scale-105 cursor-pointer border bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200';
+                        btn.innerHTML = `<svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg><span>Belum</span>`;
+                    }
+                } else {
+                    btn.innerHTML = originalContent;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                form.submit();
+            })
+            .finally(() => {
+                btn.style.opacity = '1';
+                btn.disabled = false;
+            });
+        });
+    });
+});
+</script>
+@endpush
