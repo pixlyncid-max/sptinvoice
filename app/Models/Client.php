@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-    protected $fillable = ['nama', 'perusahaan', 'email', 'telepon', 'alamat'];
+    protected $fillable = ['nama', 'perusahaan', 'email', 'telepon', 'alamat', 'jenis_pekerjaan', 'status'];
 
     public function invoices()
     {

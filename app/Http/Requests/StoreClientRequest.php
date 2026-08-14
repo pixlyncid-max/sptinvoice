@@ -16,21 +16,24 @@ class StoreClientRequest extends FormRequest
         $clientId = $this->route('client') ? $this->route('client')->id : null;
 
         return [
-            'nama' => 'required|string|max:255',
-            'perusahaan' => 'nullable|string|max:255',
-            'email' => 'required|email|unique:clients,email,' . $clientId,
+            'nama' => 'nullable|string|max:255',
+            'perusahaan' => 'required|string|max:255',
+            'email' => 'nullable|email|unique:clients,email,' . $clientId,
             'telepon' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',
+            'jenis_pekerjaan' => 'required|in:Satuan,Bulanan,Tahunan',
+            'status' => 'required|in:Aktif,Non Aktif,Pending',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'nama.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
+            'perusahaan.required' => 'Nama perusahaan wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
+            'jenis_pekerjaan.required' => 'Jenis pekerjaan wajib dipilih.',
+            'status.required' => 'Status wajib dipilih.',
         ];
     }
 }

@@ -24,17 +24,47 @@
             <div class="px-4 py-5 sm:p-0">
                 <dl class="sm:divide-y sm:divide-slate-200">
                     <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-slate-500">Nama Lengkap</dt>
-                        <dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2 font-medium">{{ $client->nama }}</dd>
+                        <dt class="text-sm font-medium text-slate-500">Perusahaan</dt>
+                        <dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2 font-medium">{{ $client->perusahaan }}</dd>
                     </div>
                     <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-slate-500">Perusahaan</dt>
-                        <dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2">{{ $client->perusahaan ?: '-' }}</dd>
+                        <dt class="text-sm font-medium text-slate-500">Nama Lengkap</dt>
+                        <dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2">{{ $client->nama ?: '-' }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-slate-500">Jenis Pekerjaan</dt>
+                        <dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                                {{ $client->jenis_pekerjaan ?? 'Satuan' }}
+                            </span>
+                        </dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-slate-500">Status</dt>
+                        <dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2">
+                            @if(($client->status ?? 'Aktif') === 'Aktif')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                    Aktif
+                                </span>
+                            @elseif(($client->status ?? 'Aktif') === 'Non Aktif')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    Non Aktif
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                    Pending
+                                </span>
+                            @endif
+                        </dd>
                     </div>
                     <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-slate-500">Email</dt>
                         <dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2">
-                            <a href="mailto:{{ $client->email }}" class="text-blue-600 hover:underline">{{ $client->email }}</a>
+                            @if($client->email)
+                                <a href="mailto:{{ $client->email }}" class="text-blue-600 hover:underline">{{ $client->email }}</a>
+                            @else
+                                -
+                            @endif
                         </dd>
                     </div>
                     <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

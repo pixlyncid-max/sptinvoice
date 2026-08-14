@@ -19,7 +19,7 @@
 @section('content')
 <div class="bg-white shadow-sm rounded-lg border border-slate-200">
     <div class="px-4 py-5 sm:p-6 border-b border-slate-200">
-        <form action="{{ route('clients.index') }}" method="GET" class="flex gap-4">
+        <form action="{{ route('clients.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
             <div class="flex-1">
                 <div class="relative rounded-md shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -28,10 +28,26 @@
                     <input type="text" name="search" value="{{ request('search') }}" class="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-slate-300 rounded-md py-2 px-3 border" placeholder="Cari nama, perusahaan, atau email...">
                 </div>
             </div>
+            <div class="w-full sm:w-40">
+                <select name="jenis_pekerjaan" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border">
+                    <option value="">Semua Jenis</option>
+                    <option value="Satuan" {{ request('jenis_pekerjaan') == 'Satuan' ? 'selected' : '' }}>Satuan</option>
+                    <option value="Bulanan" {{ request('jenis_pekerjaan') == 'Bulanan' ? 'selected' : '' }}>Bulanan</option>
+                    <option value="Tahunan" {{ request('jenis_pekerjaan') == 'Tahunan' ? 'selected' : '' }}>Tahunan</option>
+                </select>
+            </div>
+            <div class="w-full sm:w-36">
+                <select name="status" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border">
+                    <option value="">Semua Status</option>
+                    <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                    <option value="Non Aktif" {{ request('status') == 'Non Aktif' ? 'selected' : '' }}>Non Aktif</option>
+                    <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                </select>
+            </div>
             <button type="submit" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
                 Search
             </button>
-            @if(request('search'))
+            @if(request('search') || request('jenis_pekerjaan') || request('status'))
             <a href="{{ route('clients.index') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
                 Reset
             </a>
@@ -43,7 +59,9 @@
         <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
                 <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama / Perusahaan</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Perusahaan / Nama</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Jenis Pekerjaan</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Kontak</th>
                     <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">Dokumen</th>
                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
@@ -56,17 +74,37 @@
                         <div class="flex items-center">
                             <div class="h-10 w-10 shrink-0">
                                 <div class="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-lg">
-                                    {{ substr($client->nama, 0, 1) }}
+                                    {{ substr($client->perusahaan ?: ($client->nama ?: 'C'), 0, 1) }}
                                 </div>
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-slate-900">{{ $client->nama }}</div>
-                                <div class="text-sm text-slate-500">{{ $client->perusahaan ?: '-' }}</div>
+                                <div class="text-sm font-medium text-slate-900">{{ $client->perusahaan }}</div>
+                                <div class="text-sm text-slate-500">{{ $client->nama ?: '-' }}</div>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-slate-900">{{ $client->email }}</div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                            {{ $client->jenis_pekerjaan ?? 'Satuan' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if(($client->status ?? 'Aktif') === 'Aktif')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                Aktif
+                            </span>
+                        @elseif(($client->status ?? 'Aktif') === 'Non Aktif')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Non Aktif
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                Pending
+                            </span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-slate-900">{{ $client->email ?: '-' }}</div>
                         <div class="text-sm text-slate-500">{{ $client->telepon ?: '-' }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -91,7 +129,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-10 text-center text-slate-500">
+                    <td colspan="6" class="px-6 py-10 text-center text-slate-500">
                         <svg class="mx-auto h-12 w-12 text-slate-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>

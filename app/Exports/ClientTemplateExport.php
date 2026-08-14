@@ -10,7 +10,7 @@ class ClientTemplateExport implements FromArray, WithHeadings
     public function array(): array
     {
         return [
-            ['PT Contoh Perusahaan', 'Budi Santoso', 'budi@contoh.com', '081234567890', 'Jl. Jendral Sudirman No. 1, Jakarta']
+            ['PT Contoh Perusahaan', 'Budi Santoso', 'Satuan', 'Aktif', 'budi@contoh.com', '081234567890', 'Jl. Jendral Sudirman No. 1, Jakarta']
         ];
     }
 
@@ -19,6 +19,8 @@ class ClientTemplateExport implements FromArray, WithHeadings
         return [
             'Perusahaan',
             'Nama',
+            'Jenis Pekerjaan',
+            'Status',
             'Email',
             'Telepon',
             'Alamat',

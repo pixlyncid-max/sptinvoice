@@ -12,6 +12,14 @@ class ClientController extends Controller
     {
         $query = Client::query();
 
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('jenis_pekerjaan')) {
+            $query->where('jenis_pekerjaan', $request->jenis_pekerjaan);
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {

@@ -16,24 +16,48 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 
                 <div class="col-span-1">
-                    <label for="nama" class="block text-sm font-medium text-slate-700">Nama Lengkap <span class="text-red-500">*</span></label>
-                    <input type="text" name="nama" id="nama" value="{{ old('nama') }}" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('nama') border-red-500 @enderror" required>
-                    @error('nama')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="col-span-1">
-                    <label for="perusahaan" class="block text-sm font-medium text-slate-700">Nama Perusahaan</label>
-                    <input type="text" name="perusahaan" id="perusahaan" value="{{ old('perusahaan') }}" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('perusahaan') border-red-500 @enderror">
+                    <label for="perusahaan" class="block text-sm font-medium text-slate-700">Nama Perusahaan <span class="text-red-500">*</span></label>
+                    <input type="text" name="perusahaan" id="perusahaan" value="{{ old('perusahaan') }}" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('perusahaan') border-red-500 @enderror" required>
                     @error('perusahaan')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="col-span-1">
-                    <label for="email" class="block text-sm font-medium text-slate-700">Email <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('email') border-red-500 @enderror" required>
+                    <label for="nama" class="block text-sm font-medium text-slate-700">Nama Lengkap</label>
+                    <input type="text" name="nama" id="nama" value="{{ old('nama') }}" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('nama') border-red-500 @enderror">
+                    @error('nama')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="col-span-1">
+                    <label for="jenis_pekerjaan" class="block text-sm font-medium text-slate-700">Jenis Pekerjaan <span class="text-red-500">*</span></label>
+                    <select name="jenis_pekerjaan" id="jenis_pekerjaan" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('jenis_pekerjaan') border-red-500 @enderror" required>
+                        <option value="Satuan" {{ old('jenis_pekerjaan', 'Satuan') == 'Satuan' ? 'selected' : '' }}>Satuan</option>
+                        <option value="Bulanan" {{ old('jenis_pekerjaan') == 'Bulanan' ? 'selected' : '' }}>Bulanan</option>
+                        <option value="Tahunan" {{ old('jenis_pekerjaan') == 'Tahunan' ? 'selected' : '' }}>Tahunan</option>
+                    </select>
+                    @error('jenis_pekerjaan')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="col-span-1">
+                    <label for="status" class="block text-sm font-medium text-slate-700">Status <span class="text-red-500">*</span></label>
+                    <select name="status" id="status" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('status') border-red-500 @enderror" required>
+                        <option value="Aktif" {{ old('status', 'Aktif') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="Non Aktif" {{ old('status') == 'Non Aktif' ? 'selected' : '' }}>Non Aktif</option>
+                        <option value="Pending" {{ old('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    </select>
+                    @error('status')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="col-span-1">
+                    <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('email') border-red-500 @enderror">
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

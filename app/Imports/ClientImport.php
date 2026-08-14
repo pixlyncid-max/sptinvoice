@@ -10,17 +10,19 @@ class ClientImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
-        // Abaikan baris jika nama kosong
-        if (empty($row['nama'])) {
+        $perusahaan = $row['perusahaan'] ?? $row['nama'] ?? null;
+        if (empty($perusahaan)) {
             return null;
         }
 
         return new Client([
-            'perusahaan' => $row['perusahaan'] ?? null,
-            'nama'       => $row['nama'],
-            'email'      => $row['email'] ?? null,
-            'telepon'    => $row['telepon'] ?? null,
-            'alamat'     => $row['alamat'] ?? null,
+            'perusahaan'      => $perusahaan,
+            'nama'            => $row['nama'] ?? null,
+            'email'           => $row['email'] ?? null,
+            'telepon'         => $row['telepon'] ?? null,
+            'alamat'          => $row['alamat'] ?? null,
+            'jenis_pekerjaan' => isset($row['jenis_pekerjaan']) && in_array($row['jenis_pekerjaan'], ['Satuan', 'Bulanan', 'Tahunan']) ? $row['jenis_pekerjaan'] : 'Satuan',
+            'status'          => isset($row['status']) && in_array($row['status'], ['Aktif', 'Non Aktif', 'Pending']) ? $row['status'] : 'Aktif',
         ]);
     }
 }
