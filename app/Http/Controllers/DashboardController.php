@@ -23,6 +23,7 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
         $totalRateCard = RateCard::where('status', 'aktif')->count();
+        $latestClients = Client::latest()->take(5)->get();
         $latestInvoices = Invoice::with('client')->latest()->take(5)->get();
         $latestPenawaran = Penawaran::with('client')->latest()->take(5)->get();
         $totalPendapatan = Invoice::where('status', 'dibayar')->sum('total');
@@ -34,6 +35,7 @@ class DashboardController extends Controller
             'totalPenawaran',
             'penawaranByStatus',
             'totalRateCard',
+            'latestClients',
             'latestInvoices',
             'latestPenawaran',
             'totalPendapatan'

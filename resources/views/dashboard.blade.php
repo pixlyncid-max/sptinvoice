@@ -88,15 +88,78 @@
     </div>
 </div>
 
-<!-- Tables Section -->
+@if(Auth::user()->isKaryawan())
+<!-- Section Client Terbaru Khusus Karyawan -->
+<div class="data-card mb-8">
+    <div class="card-header flex justify-between items-center">
+        <h2>Daftar Client Terbaru</h2>
+        <a href="{{ route('clients.index') }}" class="text-sm font-semibold text-primary hover:underline">Lihat Semua Client</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+            <thead>
+                <tr class="text-xs text-slate-400 uppercase border-b border-slate-100 bg-slate-50">
+                    <th class="px-6 py-3 font-semibold">Perusahaan / Nama</th>
+                    <th class="px-6 py-3 font-semibold">Jenis Pekerjaan</th>
+                    <th class="px-6 py-3 font-semibold">Status</th>
+                    <th class="px-6 py-3 font-semibold">Kontak</th>
+                    <th class="px-6 py-3 font-semibold text-right">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                @forelse($latestClients as $client)
+                <tr class="hover:bg-slate-50/50 transition duration-150">
+                    <td class="px-6 py-4">
+                        <div class="font-semibold text-slate-800">{{ $client->perusahaan }}</div>
+                        <div class="text-xs text-slate-500">{{ $client->nama ?: '-' }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                            {{ $client->jenis_pekerjaan ?? 'Satuan' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        @if(($client->status ?? 'Aktif') === 'Aktif')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                Aktif
+                            </span>
+                        @elseif(($client->status ?? 'Aktif') === 'Non Aktif')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Non Aktif
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                Pending
+                            </span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-slate-800">{{ $client->email ?: '-' }}</div>
+                        <div class="text-xs text-slate-500">{{ $client->telepon ?: '-' }}</div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{{ route('clients.detail', $client) }}" class="text-blue-600 hover:text-blue-900 px-2 py-1 bg-blue-50 hover:bg-blue-100 rounded text-xs font-medium transition">Detail</a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-slate-400">
+                        Belum ada data client
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+@else
+<!-- Tables Section Admin/Superadmin -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Latest Invoices -->
     <div class="data-card">
         <div class="card-header">
             <h2>Invoice Terbaru</h2>
-            @if(!Auth::user()->isKaryawan())
             <a href="{{ route('invoices.index') }}">View All</a>
-            @endif
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -112,11 +175,7 @@
                     @forelse($latestInvoices as $invoice)
                     <tr class="hover:bg-slate-50/50 transition duration-150">
                         <td class="px-6 py-4 font-semibold text-slate-800">
-                            @if(!Auth::user()->isKaryawan())
                             <a href="{{ route('invoices.edit', $invoice) }}" class="hover:text-accent transition">{{ $invoice->nomor_invoice }}</a>
-                            @else
-                            <span>{{ $invoice->nomor_invoice }}</span>
-                            @endif
                         </td>
                         <td class="px-6 py-4 text-slate-500">{{ $invoice->client->nama }}</td>
                         <td class="px-6 py-4 text-slate-800 font-semibold">Rp {{ number_format($invoice->total, 0, ',', '.') }}</td>
@@ -141,9 +200,7 @@
     <div class="data-card">
         <div class="card-header">
             <h2>Penawaran Terbaru</h2>
-            @if(!Auth::user()->isKaryawan())
             <a href="{{ route('penawaran.index') }}">View All</a>
-            @endif
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -159,11 +216,7 @@
                     @forelse($latestPenawaran as $quo)
                     <tr class="hover:bg-slate-50/50 transition duration-150">
                         <td class="px-6 py-4 font-semibold text-slate-800">
-                            @if(!Auth::user()->isKaryawan())
                             <a href="{{ route('penawaran.edit', $quo) }}" class="hover:text-accent transition">{{ $quo->nomor_penawaran }}</a>
-                            @else
-                            <span>{{ $quo->nomor_penawaran }}</span>
-                            @endif
                         </td>
                         <td class="px-6 py-4 text-slate-500">{{ $quo->client->nama }}</td>
                         <td class="px-6 py-4 text-slate-800 font-semibold">Rp {{ number_format($quo->total, 0, ',', '.') }}</td>
@@ -184,6 +237,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <!-- Footer -->
 <div class="mt-8 pt-4 border-t border-slate-100">
