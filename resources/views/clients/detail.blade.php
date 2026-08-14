@@ -7,9 +7,11 @@
     <a href="{{ route('clients.index') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50">
         Kembali
     </a>
+    @if(!Auth::user()->isKaryawan())
     <a href="{{ route('clients.edit', $client) }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark">
         Edit Client
     </a>
+    @endif
 </div>
 @endsection
 
@@ -91,7 +93,9 @@
         <div class="bg-white shadow-sm rounded-lg border border-slate-200 overflow-hidden">
             <div class="bg-slate-50 px-4 py-4 border-b border-slate-200 flex justify-between items-center sm:px-6">
                 <h3 class="text-lg leading-6 font-medium text-slate-900">Riwayat Invoice</h3>
+                @if(!Auth::user()->isKaryawan())
                 <a href="{{ route('invoices.create', ['client_id' => $client->id]) }}" class="text-sm text-primary hover:text-primary-dark font-medium">+ Buat Invoice</a>
+                @endif
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
@@ -101,20 +105,27 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Tanggal</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Total</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
+                            @if(!Auth::user()->isKaryawan())
                             <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-slate-200">
                         @forelse ($client->invoices as $invoice)
                         <tr class="hover:bg-slate-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                @if(!Auth::user()->isKaryawan())
                                 <a href="{{ route('invoices.edit', $invoice) }}" class="text-primary hover:text-primary-dark">{{ $invoice->nomor_invoice }}</a>
+                                @else
+                                <span class="text-slate-900">{{ $invoice->nomor_invoice }}</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ $invoice->tanggal_invoice->format('d M Y') }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">Rp {{ number_format($invoice->total, 0, ',', '.') }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 <x-status-badge :status="$invoice->status" />
                             </td>
+                            @if(!Auth::user()->isKaryawan())
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus invoice ini?');">
                                     @csrf
@@ -122,10 +133,11 @@
                                     <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
                                 </form>
                             </td>
+                            @endif
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-sm text-slate-500">Belum ada invoice untuk client ini.</td>
+                            <td colspan="{{ Auth::user()->isKaryawan() ? 4 : 5 }}" class="px-6 py-4 text-center text-sm text-slate-500">Belum ada invoice untuk client ini.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -137,7 +149,9 @@
         <div class="bg-white shadow-sm rounded-lg border border-slate-200 overflow-hidden">
             <div class="bg-slate-50 px-4 py-4 border-b border-slate-200 flex justify-between items-center sm:px-6">
                 <h3 class="text-lg leading-6 font-medium text-slate-900">Riwayat Penawaran</h3>
+                @if(!Auth::user()->isKaryawan())
                 <a href="{{ route('penawaran.create', ['client_id' => $client->id]) }}" class="text-sm text-primary hover:text-primary-dark font-medium">+ Buat Penawaran</a>
+                @endif
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
@@ -147,20 +161,27 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Tanggal</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Total</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
+                            @if(!Auth::user()->isKaryawan())
                             <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-slate-200">
                         @forelse ($client->penawaran as $quo)
                         <tr class="hover:bg-slate-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                @if(!Auth::user()->isKaryawan())
                                 <a href="{{ route('penawaran.edit', $quo) }}" class="text-primary hover:text-primary-dark">{{ $quo->nomor_penawaran }}</a>
+                                @else
+                                <span class="text-slate-900">{{ $quo->nomor_penawaran }}</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ $quo->tanggal->format('d M Y') }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">Rp {{ number_format($quo->total, 0, ',', '.') }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 <x-status-badge :status="$quo->status" />
                             </td>
+                            @if(!Auth::user()->isKaryawan())
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <form action="{{ route('penawaran.destroy', $quo) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus penawaran ini?');">
                                     @csrf
@@ -168,10 +189,11 @@
                                     <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
                                 </form>
                             </td>
+                            @endif
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-sm text-slate-500">Belum ada penawaran untuk client ini.</td>
+                            <td colspan="{{ Auth::user()->isKaryawan() ? 4 : 5 }}" class="px-6 py-4 text-center text-sm text-slate-500">Belum ada penawaran untuk client ini.</td>
                         </tr>
                         @endforelse
                     </tbody>

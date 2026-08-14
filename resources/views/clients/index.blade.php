@@ -3,6 +3,7 @@
 @section('title', 'Daftar Client')
 
 @section('actions')
+@if(!Auth::user()->isKaryawan())
 <div class="flex gap-2" x-data>
     <a href="{{ route('clients.template') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
         Download Template
@@ -14,6 +15,7 @@
         + Tambah Client
     </a>
 </div>
+@endif
 @endsection
 
 @section('content')
@@ -118,12 +120,14 @@
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div class="flex justify-end gap-2">
                             <a href="{{ route('clients.detail', $client) }}" class="text-blue-600 hover:text-blue-900 px-2 py-1 bg-blue-50 hover:bg-blue-100 rounded transition">Detail</a>
+                            @if(!Auth::user()->isKaryawan())
                             <a href="{{ route('clients.edit', $client) }}" class="text-emerald-600 hover:text-emerald-900 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition">Edit</a>
                             <form action="{{ route('clients.destroy', $client) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus client ini? Semua invoice dan penawaran terkait akan terhapus!');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-900 px-2 py-1 bg-red-50 hover:bg-red-100 rounded transition">Hapus</button>
                             </form>
+                            @endif
                         </div>
                     </td>
                 </tr>

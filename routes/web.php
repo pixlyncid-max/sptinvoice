@@ -38,16 +38,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('gaa/destroy-all', [GaaDataController::class, 'destroyAll'])->name('gaa.destroy-all');
     Route::resource('gaa', GaaDataController::class);
 
-    // Routes blocked for Karyawan role (Admin & Superadmin only)
+    // Clients (Read-only for Karyawan, full access for Admin/Superadmin)
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('clients/{client}/detail', [ClientController::class, 'detail'])->name('clients.detail');
+
+    // Routes blocked for Karyawan role (Admin & Superadmin write operations)
     Route::middleware(['not_karyawan'])->group(function () {
         // Users (Kelola Admin & User)
         Route::resource('users', UserController::class)->except(['show']);
 
-        // Clients
+        // Clients Management (Create, Edit, Delete, Import, Export)
         Route::get('clients/template', [ClientController::class, 'downloadTemplate'])->name('clients.template');
         Route::post('clients/import', [ClientController::class, 'importExcel'])->name('clients.import');
-        Route::resource('clients', ClientController::class);
-        Route::get('clients/{client}/detail', [ClientController::class, 'detail'])->name('clients.detail');
+        Route::get('clients/create', [ClientController::class, 'create'])->name('clients.create');
+        Route::post('clients', [ClientController::class, 'store'])->name('clients.store');
+        Route::get('clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit');
+        Route::put('clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+        Route::delete('clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
         // Invoices
         Route::resource('invoices', InvoiceController::class);

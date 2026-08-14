@@ -11,9 +11,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        if (auth()->user() && auth()->user()->isKaryawan()) {
-            return redirect()->route('gaa.index');
-        }
+        // Allow all authenticated users (including Karyawan) to access Dashboard
 
         $totalClients = Client::count();
         $totalInvoices = Invoice::count();

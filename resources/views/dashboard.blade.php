@@ -94,7 +94,9 @@
     <div class="data-card">
         <div class="card-header">
             <h2>Invoice Terbaru</h2>
+            @if(!Auth::user()->isKaryawan())
             <a href="{{ route('invoices.index') }}">View All</a>
+            @endif
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -110,7 +112,11 @@
                     @forelse($latestInvoices as $invoice)
                     <tr class="hover:bg-slate-50/50 transition duration-150">
                         <td class="px-6 py-4 font-semibold text-slate-800">
+                            @if(!Auth::user()->isKaryawan())
                             <a href="{{ route('invoices.edit', $invoice) }}" class="hover:text-accent transition">{{ $invoice->nomor_invoice }}</a>
+                            @else
+                            <span>{{ $invoice->nomor_invoice }}</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-slate-500">{{ $invoice->client->nama }}</td>
                         <td class="px-6 py-4 text-slate-800 font-semibold">Rp {{ number_format($invoice->total, 0, ',', '.') }}</td>
@@ -135,7 +141,9 @@
     <div class="data-card">
         <div class="card-header">
             <h2>Penawaran Terbaru</h2>
+            @if(!Auth::user()->isKaryawan())
             <a href="{{ route('penawaran.index') }}">View All</a>
+            @endif
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -151,7 +159,11 @@
                     @forelse($latestPenawaran as $quo)
                     <tr class="hover:bg-slate-50/50 transition duration-150">
                         <td class="px-6 py-4 font-semibold text-slate-800">
+                            @if(!Auth::user()->isKaryawan())
                             <a href="{{ route('penawaran.edit', $quo) }}" class="hover:text-accent transition">{{ $quo->nomor_penawaran }}</a>
+                            @else
+                            <span>{{ $quo->nomor_penawaran }}</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-slate-500">{{ $quo->client->nama }}</td>
                         <td class="px-6 py-4 text-slate-800 font-semibold">Rp {{ number_format($quo->total, 0, ',', '.') }}</td>
