@@ -107,7 +107,6 @@
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase w-12">No</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Jenis Pekerjaan</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Keterangan (Opsional)</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase w-16">Aksi</th>
                             </tr>
                         </thead>
@@ -118,9 +117,6 @@
                                     <td class="px-4 py-3">
                                         <input type="text" x-model="item.deskripsi" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" placeholder="Contoh: Pembuatan Akun Coretax" required>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <input type="text" x-model="item.keterangan" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border text-slate-500" placeholder="-">
-                                    </td>
                                     <td class="px-4 py-3 text-center">
                                         <button type="button" @click="removeItem(item.id)" class="text-red-400 hover:text-red-600 transition-colors">
                                             <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -130,7 +126,7 @@
                             </template>
                             <template x-if="items.filter(i => i.kategori_layanan === 'Jenis Pekerjaan').length === 0">
                                 <tr>
-                                    <td colspan="4" class="px-4 py-8 text-center text-slate-400 text-sm italic">Belum ada item jenis pekerjaan. Klik "Tambah Baris" untuk menambah.</td>
+                                    <td colspan="3" class="px-4 py-8 text-center text-slate-400 text-sm italic">Belum ada item jenis pekerjaan. Klik "Tambah Baris" untuk menambah.</td>
                                 </tr>
                             </template>
                         </tbody>
@@ -170,15 +166,34 @@
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-4 py-3 text-sm text-slate-500 text-center" x-text="index + 1"></td>
                                     <td class="px-4 py-3">
-                                        <select x-model="item.deskripsi" 
-                                            @change="updatePriceFromSelect(item)"
-                                            :name="`items[${index}][deskripsi]`"
-                                            class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" required>
-                                            <option value="">-- Pilih Rate Card --</option>
-                                            <template x-for="rc in rateCards" :key="'select-' + rc.id">
-                                                <option :value="rc.nama_paket" x-text="rc.nama_paket"></option>
+                                        <div class="space-y-1">
+                                            <template x-if="!item.is_custom">
+                                                <div class="flex gap-1.5">
+                                                    <select x-model="item.deskripsi" 
+                                                        @change="handleFeeSelectChange(item)"
+                                                        class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" required>
+                                                        <option value="">-- Pilih Rate Card --</option>
+                                                        <template x-for="rc in rateCards" :key="'select-' + rc.id">
+                                                            <option :value="rc.nama_paket" x-text="rc.nama_paket"></option>
+                                                        </template>
+                                                        <option value="__custom__">-- Lainnya (Input Manual) --</option>
+                                                    </select>
+                                                    <button type="button" @click="item.is_custom = true; item.deskripsi = ''; item.harga_satuan = 0; calculate();" title="Input Manual Sendiri" class="px-2.5 py-1.5 border border-slate-300 text-xs font-medium rounded-md text-slate-600 bg-white hover:bg-slate-50 flex items-center whitespace-nowrap shadow-sm">
+                                                        <svg class="h-4 w-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                        Manual
+                                                    </button>
+                                                </div>
                                             </template>
-                                        </select>
+                                            <template x-if="item.is_custom">
+                                                <div class="flex gap-1.5">
+                                                    <input type="text" x-model="item.deskripsi" placeholder="Masukkan nama jasa / pekerjaan manual..." class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" required>
+                                                    <button type="button" @click="item.is_custom = false; item.deskripsi = ''; updatePriceFromSelect(item);" title="Pilih dari daftar Rate Card" class="px-2.5 py-1.5 border border-slate-300 text-xs font-medium rounded-md text-slate-600 bg-white hover:bg-slate-50 flex items-center whitespace-nowrap shadow-sm">
+                                                        <svg class="h-4 w-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                                                        Rate Card
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </td>
                                     <td class="px-4 py-3">
                                         <input type="number" x-model.number="item.qty" @input="calculate()" min="1" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" required>
@@ -547,7 +562,7 @@
                 const index = this.items.findIndex(i => i.kategori_layanan === 'Fee Pekerjaan' && i.deskripsi === '' && (i.harga_satuan == 0 || i.harga_satuan == null));
                 
                 if (index !== -1) {
-                    this.items.splice(index, 1, {...this.items[index], deskripsi: rc.nama_paket, harga_satuan: harga, qty: 1});
+                    this.items.splice(index, 1, {...this.items[index], deskripsi: rc.nama_paket, harga_satuan: harga, qty: 1, is_custom: false});
                 } else {
                     this.items.push({ 
                         id: Date.now() + Math.random(), 
@@ -555,7 +570,8 @@
                         deskripsi: rc.nama_paket, 
                         keterangan: '', 
                         qty: 1, 
-                        harga_satuan: harga 
+                        harga_satuan: harga,
+                        is_custom: false
                     });
                 }
                 
@@ -563,8 +579,18 @@
                 this.showRateCardModal = false;
             },
 
+            handleFeeSelectChange(item) {
+                if (item.deskripsi === '__custom__') {
+                    item.is_custom = true;
+                    item.deskripsi = '';
+                    item.harga_satuan = 0;
+                } else {
+                    this.updatePriceFromSelect(item);
+                }
+            },
+
             updatePriceFromSelect(item) {
-                if (item.deskripsi) {
+                if (item.deskripsi && item.deskripsi !== '__custom__') {
                     const rc = this.rateCards.find(r => r.nama_paket === item.deskripsi);
                     if (rc) {
                         item.harga_satuan = parseFloat(rc.harga) || 0;

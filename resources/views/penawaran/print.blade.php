@@ -425,9 +425,8 @@
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 30px;">NO</th>
+                                        <th style="width: 35px; text-align: center;">NO</th>
                                         <th>JENIS PEKERJAAN</th>
-                                        <th>KETERANGAN</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -435,7 +434,6 @@
                                         <tr>
                                             <td style="text-align: center;">{{ $i + 1 }}.</td>
                                             <td>{{ $item->deskripsi }}</td>
-                                            <td>{{ $item->keterangan }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -488,7 +486,6 @@
                                     <tr>
                                         <th style="width: 30px;">NO</th>
                                         <th>JENIS PEKERJAAN</th>
-                                        <th>KETERANGAN</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -496,7 +493,6 @@
                                         <tr>
                                             <td style="text-align: center;">{{ $i + 1 }}.</td>
                                             <td>{{ $item->deskripsi }}</td>
-                                            <td>{{ $item->keterangan }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -511,7 +507,6 @@
                                     <tr>
                                         <th style="width: 30px;">NO</th>
                                         <th>JENIS PEKERJAAN</th>
-                                        <th>KETERANGAN</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -519,14 +514,13 @@
                                         <tr>
                                             <td style="text-align: center;">{{ $i + 1 }}.</td>
                                             <td>{{ $item->deskripsi }}</td>
-                                            <td>{{ $item->keterangan }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         @endif
 
-                        <div class="section-title section-letter">C. &nbsp; FEE PEKERJAAN</div>
+                        <div class="section-title section-letter">C. &nbsp; BIAYA JASA (FEE)</div>
                         <div class="indent">
                             <p>Berdasarkan pemahaman kami tentang
                                 {{ $isPerizinan ? 'operasi' : ($isKeuangan ? 'kebutuhan operasional' : 'kebutuhan digital') }}
@@ -540,7 +534,7 @@
                                     <tr>
                                         <th style="width: 30px;">NO</th>
                                         <th>KETERANGAN</th>
-                                        <th style="width: 160px;">HARGA</th>
+                                        <th style="width: 160px;">BIAYA (IDR)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -561,8 +555,8 @@
                                         </tr>
                                         <tr class="total-row">
                                             <td colspan="2" style="text-align: right; border-color: #1e3a5f;">DISKON</td>
-                                            <td style="text-align: right; border-color: #1e3a5f;">Rp
-                                                {{ number_format($penawaran->diskon, 0, ',', '.') }}</td>
+                                            <td style="text-align: right; border-color: #1e3a5f;">(Rp
+                                                {{ number_format($penawaran->diskon, 0, ',', '.') }})</td>
                                         </tr>
                                     @endif
                                     <tr class="total-row">
