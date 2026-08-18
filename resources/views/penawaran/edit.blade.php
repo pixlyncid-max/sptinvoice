@@ -74,9 +74,18 @@
                 <div class="col-span-3">
                     <label class="block text-sm font-medium text-slate-700">Perihal <span class="text-red-500">*</span></label>
                     <select name="perihal" x-model="perihal" @change="fetchRateCards()" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('perihal') border-red-500 @enderror" required>
-                        <option value="Surat Penawaran Jasa Digital dan Digital Marketing" {{ old('perihal', $penawaran->perihal) == 'Surat Penawaran Jasa Digital dan Digital Marketing' ? 'selected' : '' }}>Surat Penawaran Jasa Digital dan Digital Marketing</option>
-                        <option value="Surat Penawaran Jasa Keuangan dan Perpajakan" {{ old('perihal', $penawaran->perihal) == 'Surat Penawaran Jasa Keuangan dan Perpajakan' ? 'selected' : '' }}>Surat Penawaran Jasa Keuangan dan Perpajakan</option>
-                        <option value="Surat Penawaran Jasa Perizinan dan Perpajakan" {{ old('perihal', $penawaran->perihal) == 'Surat Penawaran Jasa Perizinan dan Perpajakan' ? 'selected' : '' }}>Surat Penawaran Jasa Perizinan dan Perpajakan</option>
+                        @if(isset($templates) && $templates->isNotEmpty())
+                            @foreach($templates as $template)
+                                <option value="{{ $template->name }}" {{ strcasecmp(old('perihal', $penawaran->perihal), $template->name) === 0 ? 'selected' : '' }}>{{ $template->name }}</option>
+                            @endforeach
+                            @if(!$templates->contains(fn($t) => strcasecmp($t->name, old('perihal', $penawaran->perihal)) === 0) && ($penawaran->perihal || old('perihal')))
+                                <option value="{{ old('perihal', $penawaran->perihal) }}" selected>{{ old('perihal', $penawaran->perihal) }}</option>
+                            @endif
+                        @else
+                            <option value="Surat Penawaran Jasa Digital dan Digital Marketing" {{ old('perihal', $penawaran->perihal) == 'Surat Penawaran Jasa Digital dan Digital Marketing' ? 'selected' : '' }}>Surat Penawaran Jasa Digital dan Digital Marketing</option>
+                            <option value="Surat Penawaran Jasa Keuangan dan Perpajakan" {{ old('perihal', $penawaran->perihal) == 'Surat Penawaran Jasa Keuangan dan Perpajakan' ? 'selected' : '' }}>Surat Penawaran Jasa Keuangan dan Perpajakan</option>
+                            <option value="Surat Penawaran Jasa Perizinan dan Perpajakan" {{ old('perihal', $penawaran->perihal) == 'Surat Penawaran Jasa Perizinan dan Perpajakan' ? 'selected' : '' }}>Surat Penawaran Jasa Perizinan dan Perpajakan</option>
+                        @endif
                     </select>
                     @error('perihal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
@@ -442,17 +451,20 @@
             filterDivisi: 'digital_marketing',
             fetchController: null,
 
-            perihalToDivisi: {
-                'Surat Penawaran Jasa Digital dan Digital Marketing': 'digital_marketing',
-                'Surat Penawaran Jasa Keuangan dan Perpajakan': 'keuangan_perpajakan',
-                'Surat Penawaran Jasa Perizinan dan Perpajakan': 'perizinan',
+            getDivisiFromPerihal(perihalName) {
+                if (!perihalName) return 'digital_marketing';
+                const p = perihalName.toLowerCase();
+                if (p.includes('perizinan')) return 'perizinan';
+                if (p.includes('keuangan') || p.includes('perpajakan') || p.includes('pajak')) return 'keuangan_perpajakan';
+                if (p.includes('digital') || p.includes('marketing') || p.includes('it')) return 'digital_marketing';
+                return 'digital_marketing';
             },
 
             init() {
                 this.calculate();
                 
                 // Fetch rate cards immediately and then watch for changes
-                this.filterDivisi = this.perihalToDivisi[this.perihal] || 'digital_marketing';
+                this.filterDivisi = this.getDivisiFromPerihal(this.perihal);
                 
                 this.$nextTick(() => {
                     this.fetchRateCards();
@@ -461,7 +473,7 @@
                 // Watch for perihal changes to refresh rate cards
                 this.$watch('perihal', (value) => {
                     console.log('Perihal changed to:', value);
-                    this.filterDivisi = this.perihalToDivisi[value] || 'digital_marketing';
+                    this.filterDivisi = this.getDivisiFromPerihal(value);
                     this.fetchRateCards();
                 });
             },

@@ -234,11 +234,22 @@
 
     @php
         // Check quotation type and get template
-        $isPerizinan = str_contains(strtolower($penawaran->perihal), 'perizinan');
-        $isKeuangan = !$isPerizinan && (str_contains(strtolower($penawaran->perihal), 'keuangan') || str_contains(strtolower($penawaran->perihal), 'perpajakan'));
+        $cleanPerihal = trim(strtolower($penawaran->perihal ?? ''));
+        $template = \App\Models\PenawaranTemplate::whereRaw('LOWER(name) = ?', [$cleanPerihal])
+            ->orWhereRaw('LOWER(code) = ?', [$cleanPerihal])
+            ->first();
 
-        $templateCode = $isPerizinan ? 'perizinan' : ($isKeuangan ? 'keuangan' : 'digital');
-        $template = \App\Models\PenawaranTemplate::where('code', $templateCode)->first();
+        $isPerizinan = $template ? ($template->code === 'perizinan' || str_contains($cleanPerihal, 'perizinan')) : str_contains($cleanPerihal, 'perizinan');
+        $isKeuangan = $template ? ($template->code === 'keuangan' || str_contains($cleanPerihal, 'keuangan') || str_contains($cleanPerihal, 'perpajakan')) : (!$isPerizinan && (str_contains($cleanPerihal, 'keuangan') || str_contains($cleanPerihal, 'perpajakan')));
+
+        if (!$template) {
+            $templateCode = $isPerizinan ? 'perizinan' : ($isKeuangan ? 'keuangan' : 'digital');
+            $template = \App\Models\PenawaranTemplate::where('code', $templateCode)->first();
+        }
+
+        $subTitle = $template ? str_ireplace(['SURAT PENAWARAN JASA ', 'SURAT PENAWARAN '], '', $template->name) : (
+            $isPerizinan ? 'PERIZINAN DAN PERPAJAKAN' : ($isKeuangan ? 'KEUANGAN DAN PERPAJAKAN' : 'DIGITAL DAN DIGITAL MARKETING')
+        );
 
         // Group items by kategori_layanan
         $jenisPekerjaanManual = $penawaran->items->where('kategori_layanan', 'Jenis Pekerjaan')->values();
@@ -315,13 +326,7 @@
 
                         <div class="doc-title">
                             <h2>SURAT PENAWARAN JASA</h2>
-                            @if($isPerizinan)
-                                <h3>PERIZINAN DAN PERPAJAKAN</h3>
-                            @elseif($isKeuangan)
-                                <h3>KEUANGAN DAN PERPAJAKAN</h3>
-                            @else
-                                <h3>DIGITAL DAN DIGITAL MARKETING</h3>
-                            @endif
+                            <h3>{{ $subTitle }}</h3>
                         </div>
 
                         @php

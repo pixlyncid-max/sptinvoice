@@ -22,10 +22,16 @@
             </div>
             <div>
                 <select name="perihal" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border">
-                    <option value="">Semua Layanan</option>
-                    <option value="Surat Penawaran Jasa Digital dan Digital Marketing" {{ request('perihal') == 'Surat Penawaran Jasa Digital dan Digital Marketing' ? 'selected' : '' }}>Digital Marketing</option>
-                    <option value="Surat Penawaran Jasa Keuangan dan Perpajakan" {{ request('perihal') == 'Surat Penawaran Jasa Keuangan dan Perpajakan' ? 'selected' : '' }}>Keuangan & Pajak</option>
-                    <option value="Surat Penawaran Jasa Perizinan dan Perpajakan" {{ request('perihal') == 'Surat Penawaran Jasa Perizinan dan Perpajakan' ? 'selected' : '' }}>Perizinan</option>
+                    <option value="">Semua Layanan / Perihal</option>
+                    @if(isset($perihalList) && $perihalList->isNotEmpty())
+                        @foreach($perihalList as $p)
+                            <option value="{{ $p }}" {{ request('perihal') == $p ? 'selected' : '' }}>{{ $p }}</option>
+                        @endforeach
+                    @else
+                        <option value="Surat Penawaran Jasa Digital dan Digital Marketing" {{ request('perihal') == 'Surat Penawaran Jasa Digital dan Digital Marketing' ? 'selected' : '' }}>Digital Marketing</option>
+                        <option value="Surat Penawaran Jasa Keuangan dan Perpajakan" {{ request('perihal') == 'Surat Penawaran Jasa Keuangan dan Perpajakan' ? 'selected' : '' }}>Keuangan & Pajak</option>
+                        <option value="Surat Penawaran Jasa Perizinan dan Perpajakan" {{ request('perihal') == 'Surat Penawaran Jasa Perizinan dan Perpajakan' ? 'selected' : '' }}>Perizinan</option>
+                    @endif
                 </select>
             </div>
             <div>

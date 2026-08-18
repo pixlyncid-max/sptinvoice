@@ -60,9 +60,15 @@
                 <div class="sm:col-span-2 lg:col-span-3">
                     <label class="block text-sm font-medium text-slate-700">Perihal <span class="text-red-500">*</span></label>
                     <select name="perihal" x-model="perihal" @change="fetchRateCards()" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('perihal') border-red-500 @enderror" required>
-                        <option value="Surat Penawaran Jasa Digital dan Digital Marketing">Surat Penawaran Jasa Digital dan Digital Marketing</option>
-                        <option value="Surat Penawaran Jasa Keuangan dan Perpajakan">Surat Penawaran Jasa Keuangan dan Perpajakan</option>
-                        <option value="Surat Penawaran Jasa Perizinan dan Perpajakan">Surat Penawaran Jasa Perizinan dan Perpajakan</option>
+                        @if(isset($templates) && $templates->isNotEmpty())
+                            @foreach($templates as $template)
+                                <option value="{{ $template->name }}" {{ old('perihal', $templates->first()->name) == $template->name ? 'selected' : '' }}>{{ $template->name }}</option>
+                            @endforeach
+                        @else
+                            <option value="Surat Penawaran Jasa Digital dan Digital Marketing">Surat Penawaran Jasa Digital dan Digital Marketing</option>
+                            <option value="Surat Penawaran Jasa Keuangan dan Perpajakan">Surat Penawaran Jasa Keuangan dan Perpajakan</option>
+                            <option value="Surat Penawaran Jasa Perizinan dan Perpajakan">Surat Penawaran Jasa Perizinan dan Perpajakan</option>
+                        @endif
                     </select>
                     @error('perihal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
@@ -396,7 +402,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('penawaranForm', () => ({
             clientId: '{{ old('client_id', request('client_id')) }}',
-            perihal: '{{ old('perihal', 'Surat Penawaran Jasa Digital dan Digital Marketing') }}',
+            perihal: '{{ old('perihal', (isset($templates) && $templates->isNotEmpty()) ? $templates->first()->name : 'Surat Penawaran Jasa Digital dan Digital Marketing') }}',
             items: [
                 { id: 'initial-1', kategori_layanan: 'Jenis Pekerjaan', deskripsi: '', keterangan: '', qty: 1, harga_satuan: 0 },
                 { id: 'initial-2', kategori_layanan: 'Fee Pekerjaan', deskripsi: '', keterangan: '', qty: 1, harga_satuan: 0 },
@@ -416,10 +422,13 @@
             filterDivisi: 'digital_marketing',
             fetchController: null,
 
-            perihalToDivisi: {
-                'Surat Penawaran Jasa Digital dan Digital Marketing': 'digital_marketing',
-                'Surat Penawaran Jasa Keuangan dan Perpajakan': 'keuangan_perpajakan',
-                'Surat Penawaran Jasa Perizinan dan Perpajakan': 'perizinan',
+            getDivisiFromPerihal(perihalName) {
+                if (!perihalName) return 'digital_marketing';
+                const p = perihalName.toLowerCase();
+                if (p.includes('perizinan')) return 'perizinan';
+                if (p.includes('keuangan') || p.includes('perpajakan') || p.includes('pajak')) return 'keuangan_perpajakan';
+                if (p.includes('digital') || p.includes('marketing') || p.includes('it')) return 'digital_marketing';
+                return 'digital_marketing';
             },
 
             init() {
@@ -430,7 +439,7 @@
                 this.calculate();
                 
                 // Fetch rate cards immediately and then watch for changes
-                this.filterDivisi = this.perihalToDivisi[this.perihal] || 'digital_marketing';
+                this.filterDivisi = this.getDivisiFromPerihal(this.perihal);
                 
                 this.$nextTick(() => {
                     this.fetchRateCards();
@@ -438,7 +447,7 @@
 
                 this.$watch('perihal', (value) => {
                     console.log('Perihal changed to:', value);
-                    this.filterDivisi = this.perihalToDivisi[value] || 'digital_marketing';
+                    this.filterDivisi = this.getDivisiFromPerihal(value);
                     this.fetchRateCards();
                 });
             },

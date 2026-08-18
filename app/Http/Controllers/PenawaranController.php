@@ -6,6 +6,7 @@ use App\Http\Requests\StorePenawaranRequest;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Penawaran;
+use App\Models\PenawaranTemplate;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -34,14 +35,20 @@ class PenawaranController extends Controller
 
         $penawarans = $query->latest()->paginate(10)->withQueryString();
 
-        return view('penawaran.index', compact('penawarans'));
+        $perihalList = PenawaranTemplate::orderBy('name')->pluck('name')
+            ->merge(Penawaran::distinct()->whereNotNull('perihal')->pluck('perihal'))
+            ->unique()
+            ->values();
+
+        return view('penawaran.index', compact('penawarans', 'perihalList'));
     }
 
     public function create()
     {
         $clients = Client::orderBy('nama')->get();
         $nomor = Penawaran::generateNomor();
-        return view('penawaran.create', compact('clients', 'nomor'));
+        $templates = PenawaranTemplate::orderBy('name')->get();
+        return view('penawaran.create', compact('clients', 'nomor', 'templates'));
     }
 
     public function store(StorePenawaranRequest $request)
@@ -88,7 +95,8 @@ class PenawaranController extends Controller
     {
         $penawaran->load('items', 'client');
         $clients = Client::orderBy('nama')->get();
-        return view('penawaran.edit', compact('penawaran', 'clients'));
+        $templates = PenawaranTemplate::orderBy('name')->get();
+        return view('penawaran.edit', compact('penawaran', 'clients', 'templates'));
     }
 
     public function update(StorePenawaranRequest $request, Penawaran $penawaran)
