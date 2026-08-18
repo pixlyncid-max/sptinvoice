@@ -190,8 +190,11 @@
                                                         @change="handleFeeSelectChange(item)"
                                                         class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" required>
                                                         <option value="">-- Pilih Rate Card --</option>
+                                                        <template x-if="item.deskripsi && !rateCards.some(rc => rc.nama_paket === item.deskripsi)">
+                                                            <option :value="item.deskripsi" x-text="item.deskripsi" selected></option>
+                                                        </template>
                                                         <template x-for="rc in rateCards" :key="'select-' + rc.id">
-                                                            <option :value="rc.nama_paket" x-text="rc.nama_paket"></option>
+                                                            <option :value="rc.nama_paket" x-text="rc.nama_paket" :selected="item.deskripsi === rc.nama_paket"></option>
                                                         </template>
                                                         <option value="__custom__">-- Lainnya (Input Manual) --</option>
                                                     </select>
@@ -443,14 +446,20 @@
         Alpine.data('penawaranForm', () => ({
             clientId: '{{ old('client_id', $penawaran->client_id) }}',
             perihal: '{{ old('perihal', $penawaran->perihal) }}',
-            items: {!! json_encode($penawaran->items->map(function($item) {
+            items: {!! json_encode($penawaran->items->map(function($item) use ($rateCards) {
+                $isCustom = false;
+                if ($item->kategori_layanan === 'Fee Pekerjaan' && $item->deskripsi) {
+                    $found = isset($rateCards) && $rateCards->contains('nama_paket', $item->deskripsi);
+                    $isCustom = !$found;
+                }
                 return [
                     'id' => $item->id,
                     'kategori_layanan' => $item->kategori_layanan ?? 'Fee Pekerjaan',
                     'deskripsi' => $item->deskripsi,
                     'keterangan' => $item->keterangan ?? '',
-                    'qty' => $item->qty,
-                    'harga_satuan' => (float) $item->harga_satuan
+                    'qty' => (float) $item->qty,
+                    'harga_satuan' => (float) $item->harga_satuan,
+                    'is_custom' => $isCustom
                 ];
             })) !!},
             diskon: {{ old('diskon', (float) ($penawaran->diskon ?? 0)) }},
@@ -461,7 +470,7 @@
             setelah_diskon: 0,
             total: 0,
             showRateCardModal: false,
-            rateCards: [],
+            rateCards: {!! json_encode($rateCards ?? []) !!},
             searchRateCard: '',
             loadingRateCards: false,
             filterDivisi: 'digital_marketing',
@@ -479,7 +488,7 @@
             init() {
                 this.calculate();
                 
-                // Fetch rate cards immediately and then watch for changes
+                // Set filter divisi based on perihal
                 this.filterDivisi = this.getDivisiFromPerihal(this.perihal);
                 
                 this.$nextTick(() => {
@@ -501,7 +510,8 @@
                     deskripsi: '', 
                     keterangan: '', 
                     qty: 1, 
-                    harga_satuan: 0 
+                    harga_satuan: 0,
+                    is_custom: false
                 });
             },
 
@@ -544,6 +554,12 @@
                 );
             },
 
+            getFilteredRateCardsByDivisi() {
+                if (!this.filterDivisi) return this.rateCards;
+                const filtered = this.rateCards.filter(rc => rc.divisi === this.filterDivisi);
+                return filtered.length > 0 ? filtered : this.rateCards;
+            },
+
             fetchRateCards() {
                 this.fetchRateCardsByDivisi(this.filterDivisi);
             },
@@ -559,7 +575,6 @@
                 this.fetchController = new AbortController();
                 
                 this.loadingRateCards = true;
-                this.rateCards = []; // Reset to avoid Alpine.js diffing issues
                 
                 fetch(`{{ route('rate-cards.items') }}?divisi=${divisi}`, {
                     signal: this.fetchController.signal
@@ -570,7 +585,9 @@
                     })
                     .then(data => {
                         console.log('Rate cards loaded:', Array.isArray(data) ? data.length : 'not an array', 'items');
-                        this.rateCards = Array.isArray(data) ? data : [];
+                        if (Array.isArray(data) && data.length > 0) {
+                            this.rateCards = data;
+                        }
                         this.loadingRateCards = false;
 
                         // Detect custom items
@@ -587,7 +604,6 @@
                         if (err.name === 'AbortError') return;
                         console.error('Error fetching rate cards:', err);
                         this.loadingRateCards = false;
-                        this.rateCards = [];
                     });
             },
 

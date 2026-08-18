@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Penawaran;
 use App\Models\PenawaranTemplate;
+use App\Models\RateCard;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -48,7 +49,8 @@ class PenawaranController extends Controller
         $clients = Client::orderBy('nama')->get();
         $nomor = Penawaran::generateNomor();
         $templates = PenawaranTemplate::orderBy('name')->get();
-        return view('penawaran.create', compact('clients', 'nomor', 'templates'));
+        $rateCards = RateCard::where('status', 'aktif')->orderBy('sub_kategori')->orderBy('nama_paket')->get();
+        return view('penawaran.create', compact('clients', 'nomor', 'templates', 'rateCards'));
     }
 
     public function store(StorePenawaranRequest $request)
@@ -96,7 +98,8 @@ class PenawaranController extends Controller
         $penawaran->load('items', 'client');
         $clients = Client::orderBy('nama')->get();
         $templates = PenawaranTemplate::orderBy('name')->get();
-        return view('penawaran.edit', compact('penawaran', 'clients', 'templates'));
+        $rateCards = RateCard::where('status', 'aktif')->orderBy('sub_kategori')->orderBy('nama_paket')->get();
+        return view('penawaran.edit', compact('penawaran', 'clients', 'templates', 'rateCards'));
     }
 
     public function update(StorePenawaranRequest $request, Penawaran $penawaran)

@@ -532,9 +532,11 @@
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 30px;">NO</th>
+                                        <th style="width: 30px; text-align: center;">NO</th>
                                         <th>KETERANGAN</th>
-                                        <th style="width: 160px;">BIAYA (IDR)</th>
+                                        <th style="width: 120px; text-align: right;">HARGA SATUAN</th>
+                                        <th style="width: 50px; text-align: center;">QTY</th>
+                                        <th style="width: 130px; text-align: right;">TOTAL HARGA</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -544,23 +546,26 @@
                                             <td>{{ $item->deskripsi }}</td>
                                             <td style="text-align: right;">Rp
                                                 {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+                                            <td style="text-align: center;">{{ $item->qty }}</td>
+                                            <td style="text-align: right;">Rp
+                                                {{ number_format($item->qty * $item->harga_satuan, 0, ',', '.') }}</td>
                                         </tr>
                                     @endforeach
 
                                     @if($penawaran->diskon > 0)
                                         <tr class="total-row">
-                                            <td colspan="2" style="text-align: right; border-color: #1e3a5f;">TOTAL</td>
+                                            <td colspan="4" style="text-align: right; border-color: #1e3a5f;">TOTAL</td>
                                             <td style="text-align: right; border-color: #1e3a5f;">Rp
                                                 {{ number_format($penawaran->subtotal, 0, ',', '.') }}</td>
                                         </tr>
                                         <tr class="total-row">
-                                            <td colspan="2" style="text-align: right; border-color: #1e3a5f;">DISKON</td>
+                                            <td colspan="4" style="text-align: right; border-color: #1e3a5f;">DISKON</td>
                                             <td style="text-align: right; border-color: #1e3a5f;">(Rp
                                                 {{ number_format($penawaran->diskon, 0, ',', '.') }})</td>
                                         </tr>
                                     @endif
                                     <tr class="total-row">
-                                        <td colspan="2" style="text-align: right; border-color: #1e3a5f;">TOTAL PENAWARAN
+                                        <td colspan="4" style="text-align: right; border-color: #1e3a5f;">TOTAL PENAWARAN
                                         </td>
                                         <td style="text-align: right; border-color: #1e3a5f;">Rp
                                             {{ number_format($penawaran->total, 0, ',', '.') }}</td>

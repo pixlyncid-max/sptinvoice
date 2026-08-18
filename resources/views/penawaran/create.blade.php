@@ -173,8 +173,11 @@
                                                         @change="handleFeeSelectChange(item)"
                                                         class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" required>
                                                         <option value="">-- Pilih Rate Card --</option>
+                                                        <template x-if="item.deskripsi && !rateCards.some(rc => rc.nama_paket === item.deskripsi)">
+                                                            <option :value="item.deskripsi" x-text="item.deskripsi" selected></option>
+                                                        </template>
                                                         <template x-for="rc in rateCards" :key="'select-' + rc.id">
-                                                            <option :value="rc.nama_paket" x-text="rc.nama_paket"></option>
+                                                            <option :value="rc.nama_paket" x-text="rc.nama_paket" :selected="item.deskripsi === rc.nama_paket"></option>
                                                         </template>
                                                         <option value="__custom__">-- Lainnya (Input Manual) --</option>
                                                     </select>
@@ -431,7 +434,7 @@
             setelah_diskon: 0,
             total: 0,
             showRateCardModal: false,
-            rateCards: [],
+            rateCards: {!! json_encode($rateCards ?? []) !!},
             searchRateCard: '',
             loadingRateCards: false,
             filterDivisi: 'digital_marketing',
@@ -453,7 +456,6 @@
                 
                 this.calculate();
                 
-                // Fetch rate cards immediately and then watch for changes
                 this.filterDivisi = this.getDivisiFromPerihal(this.perihal);
                 
                 this.$nextTick(() => {
@@ -474,7 +476,8 @@
                     deskripsi: '', 
                     keterangan: '', 
                     qty: 1, 
-                    harga_satuan: 0 
+                    harga_satuan: 0,
+                    is_custom: false
                 });
             },
 
@@ -509,12 +512,18 @@
             },
 
             getFilteredRateCards() {
-                if (!this.searchRateCard) return this.rateCards;
+                if (!this.searchRateCard) return this.getFilteredRateCardsByDivisi();
                 const search = this.searchRateCard.toLowerCase();
-                return this.rateCards.filter(rc => 
+                return this.getFilteredRateCardsByDivisi().filter(rc => 
                     (rc.nama_paket && rc.nama_paket.toLowerCase().includes(search)) || 
                     (rc.sub_kategori && rc.sub_kategori.toLowerCase().includes(search))
                 );
+            },
+
+            getFilteredRateCardsByDivisi() {
+                if (!this.filterDivisi) return this.rateCards;
+                const filtered = this.rateCards.filter(rc => rc.divisi === this.filterDivisi);
+                return filtered.length > 0 ? filtered : this.rateCards;
             },
 
             fetchRateCards() {
@@ -532,7 +541,6 @@
                 this.fetchController = new AbortController();
                 
                 this.loadingRateCards = true;
-                this.rateCards = []; // Reset to avoid Alpine.js diffing issues
                 
                 fetch(`{{ route('rate-cards.items') }}?divisi=${divisi}`, {
                     signal: this.fetchController.signal
@@ -543,14 +551,15 @@
                     })
                     .then(data => {
                         console.log('Rate cards loaded:', Array.isArray(data) ? data.length : 'not an array', 'items');
-                        this.rateCards = Array.isArray(data) ? data : [];
+                        if (Array.isArray(data) && data.length > 0) {
+                            this.rateCards = data;
+                        }
                         this.loadingRateCards = false;
                     })
                     .catch(err => {
                         if (err.name === 'AbortError') return;
                         console.error('Error fetching rate cards:', err);
                         this.loadingRateCards = false;
-                        this.rateCards = [];
                     });
             },
 
