@@ -36,7 +36,7 @@
                     <label for="role" class="block text-sm font-medium text-slate-700">Role / Hak Akses <span class="text-red-500">*</span></label>
                     <select name="role" id="role" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('role') border-red-500 @enderror" required>
                         <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin (Akses Penuh)</option>
-                        <option value="karyawan" {{ old('role', $user->role) == 'karyawan' ? 'selected' : '' }}>Karyawan (Akses Khusus Data GAA)</option>
+                        <option value="karyawan" {{ old('role', $user->role) == 'karyawan' ? 'selected' : '' }}>Karyawan (Akses GAA, Invoice, Penawaran, Rate Card)</option>
                         <option value="superadmin" {{ old('role', $user->role) == 'superadmin' ? 'selected' : '' }}>Superadmin (Akses Pengaturan & Master Data)</option>
                     </select>
                     @error('role')

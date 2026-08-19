@@ -42,6 +42,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
     Route::get('clients/{client}/detail', [ClientController::class, 'detail'])->name('clients.detail');
 
+    // Invoices (Accessible by Admin, Superadmin, Karyawan)
+    Route::resource('invoices', InvoiceController::class);
+    Route::get('invoices/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+    Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'exportPdf'])->name('invoices.pdf');
+    Route::patch('invoices/{invoice}/status', [InvoiceController::class, 'updateStatus'])->name('invoices.status');
+    Route::post('invoices/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->name('invoices.duplicate');
+
+    // Penawaran (Accessible by Admin, Superadmin, Karyawan)
+    Route::resource('penawaran', PenawaranController::class);
+    Route::get('penawaran/{penawaran}/print', [PenawaranController::class, 'print'])->name('penawaran.print');
+    Route::get('penawaran/{penawaran}/pdf', [PenawaranController::class, 'exportPdf'])->name('penawaran.pdf');
+    Route::patch('penawaran/{penawaran}/status', [PenawaranController::class, 'updateStatus'])->name('penawaran.status');
+    Route::post('penawaran/{penawaran}/convert', [PenawaranController::class, 'convertToInvoice'])->name('penawaran.convert');
+
+    // Rate Card (Accessible by Admin, Superadmin, Karyawan)
+    Route::resource('rate-cards', RateCardController::class);
+    Route::get('rate-cards-items', [RateCardController::class, 'getItems'])->name('rate-cards.items');
+
     // Routes blocked for Karyawan role (Admin & Superadmin write operations)
     Route::middleware(['not_karyawan'])->group(function () {
         // Users (Kelola Admin & User)
@@ -55,24 +73,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit');
         Route::put('clients/{client}', [ClientController::class, 'update'])->name('clients.update');
         Route::delete('clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
-
-        // Invoices
-        Route::resource('invoices', InvoiceController::class);
-        Route::get('invoices/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
-        Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'exportPdf'])->name('invoices.pdf');
-        Route::patch('invoices/{invoice}/status', [InvoiceController::class, 'updateStatus'])->name('invoices.status');
-        Route::post('invoices/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->name('invoices.duplicate');
-
-        // Penawaran
-        Route::resource('penawaran', PenawaranController::class);
-        Route::get('penawaran/{penawaran}/print', [PenawaranController::class, 'print'])->name('penawaran.print');
-        Route::get('penawaran/{penawaran}/pdf', [PenawaranController::class, 'exportPdf'])->name('penawaran.pdf');
-        Route::patch('penawaran/{penawaran}/status', [PenawaranController::class, 'updateStatus'])->name('penawaran.status');
-        Route::post('penawaran/{penawaran}/convert', [PenawaranController::class, 'convertToInvoice'])->name('penawaran.convert');
-
-        // Rate Card
-        Route::resource('rate-cards', RateCardController::class);
-        Route::get('rate-cards-items', [RateCardController::class, 'getItems'])->name('rate-cards.items');
 
         // Karyawan (Employees)
         Route::post('employees/import', [EmployeeController::class, 'importExcel'])->name('employees.import');
