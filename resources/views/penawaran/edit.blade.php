@@ -111,31 +111,87 @@
             
             <!-- 1. JENIS PEKERJAAN -->
             <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-md font-bold text-slate-800 uppercase tracking-wider">1. Jenis Pekerjaan</h3>
-                    <button type="button" @click="addItem('Jenis Pekerjaan')" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primary hover:bg-primary-dark shadow-sm transition-all">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        Tambah Baris
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h3 class="text-md font-bold text-slate-800 uppercase tracking-wider">1. Jenis Pekerjaan</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Daftar item pekerjaan atau rincian layanan yang ditawarkan ke client.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <!-- Toggle Button Gunakan Tabel -->
+                        <button type="button" 
+                            @click="toggleJenisPekerjaanTable()" 
+                            :class="useJenisPekerjaanTable ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100' : 'bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200'" 
+                            class="inline-flex items-center px-3 py-1.5 border text-xs font-semibold rounded-md shadow-sm transition-all">
+                            <span class="w-2 h-2 rounded-full mr-1.5" :class="useJenisPekerjaanTable ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                            <span x-text="useJenisPekerjaanTable ? 'Gunakan Tabel (Aktif)' : 'Gunakan Tabel (Nonaktif)'"></span>
+                        </button>
+                        
+                        <!-- Tambah Baris Button -->
+                        <button type="button" 
+                            x-show="useJenisPekerjaanTable" 
+                            @click="addItem('Jenis Pekerjaan')" 
+                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primary hover:bg-primary-dark shadow-sm transition-all">
+                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Tambah Baris
+                        </button>
+                    </div>
+                </div>
+
+                <!-- When Table is Disabled -->
+                <div x-show="!useJenisPekerjaanTable" class="p-5 bg-slate-50 border border-dashed border-slate-300 rounded-lg text-center">
+                    <svg class="mx-auto h-8 w-8 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <p class="text-sm font-medium text-slate-700">Tabel Jenis Pekerjaan Nonaktif</p>
+                    <p class="text-xs text-slate-500 mt-1">Bagian ini tidak akan mencantumkan tabel rincian jenis pekerjaan pada dokumen penawaran.</p>
+                    <button type="button" @click="toggleJenisPekerjaanTable()" class="mt-3 inline-flex items-center px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition">
+                        + Aktifkan & Gunakan Tabel
                     </button>
                 </div>
-                <div class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm">
+
+                <!-- When Table is Enabled -->
+                <div x-show="useJenisPekerjaanTable" class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm">
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase w-12">No</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Jenis Pekerjaan</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase w-12">No</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Jenis Pekerjaan & Deskripsi Opsional</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase w-16">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-slate-100">
                             <template x-for="(item, index) in items.filter(i => i.kategori_layanan === 'Jenis Pekerjaan')" :key="item.id">
-                                <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="px-4 py-3 text-sm text-slate-500 text-center" x-text="index + 1"></td>
-                                    <td class="px-4 py-3">
-                                        <input type="text" x-model="item.deskripsi" class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border" placeholder="Contoh: Pembuatan Akun Coretax" required>
+                                <tr class="hover:bg-slate-50/70 transition-colors">
+                                    <td class="px-4 py-3.5 text-sm font-medium text-slate-500 text-center align-top pt-4" x-text="index + 1"></td>
+                                    <td class="px-4 py-3 align-top">
+                                        <div class="space-y-2">
+                                            <!-- Main Input -->
+                                            <div class="flex items-center gap-2">
+                                                <input type="text" 
+                                                    x-model="item.deskripsi" 
+                                                    :required="useJenisPekerjaanTable"
+                                                    class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border font-medium" 
+                                                    placeholder="Contoh: Pembuatan Akun Coretax">
+                                                <button type="button" 
+                                                    @click="toggleItemDescription(item)"
+                                                    :class="item.has_keterangan ? 'bg-primary text-white border-primary hover:bg-primary-dark' : 'bg-slate-50 text-slate-600 border-slate-300 hover:bg-slate-100'"
+                                                    class="inline-flex items-center gap-1 px-2.5 py-2 border text-xs font-medium rounded-md whitespace-nowrap transition-colors shadow-sm"
+                                                    :title="item.has_keterangan ? 'Tutup Deskripsi' : 'Tambah Deskripsi Opsional'">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                                                    <span x-text="item.has_keterangan ? 'Deskripsi' : '+ Deskripsi'"></span>
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Optional Description Textarea -->
+                                            <div x-show="item.has_keterangan" x-transition class="space-y-1 bg-slate-50 p-2.5 rounded-md border border-slate-200">
+                                                <div class="flex justify-between items-center">
+                                                    <label class="text-[11px] font-semibold uppercase text-slate-500">Deskripsi / Rincian Opsional (No. <span x-text="index + 1"></span>)</label>
+                                                    <button type="button" @click="removeItemDescription(item)" class="text-[11px] text-red-500 hover:text-red-700 hover:underline">Hapus Deskripsi</button>
+                                                </div>
+                                                <textarea x-model="item.keterangan" rows="2" class="focus:ring-primary focus:border-primary block w-full text-xs border-slate-300 rounded-md py-1.5 px-2.5 border bg-white" placeholder="Masukkan rincian atau penjelasan opsional untuk jenis pekerjaan ini..."></textarea>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button type="button" @click="removeItem(item.id)" class="text-red-400 hover:text-red-600 transition-colors">
+                                    <td class="px-4 py-3.5 text-center align-top pt-4">
+                                        <button type="button" @click="removeItem(item.id)" class="text-red-400 hover:text-red-600 transition-colors p-1 rounded hover:bg-red-50" title="Hapus Baris">
                                             <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                         </button>
                                     </td>
@@ -143,7 +199,9 @@
                             </template>
                             <template x-if="items.filter(i => i.kategori_layanan === 'Jenis Pekerjaan').length === 0">
                                 <tr>
-                                    <td colspan="3" class="px-4 py-8 text-center text-slate-400 text-sm italic">Belum ada item jenis pekerjaan. Klik "Tambah Baris" untuk menambah.</td>
+                                    <td colspan="3" class="px-4 py-8 text-center text-slate-400 text-sm italic">
+                                        Belum ada item jenis pekerjaan. Klik <button type="button" @click="addItem('Jenis Pekerjaan')" class="text-primary font-medium hover:underline">"Tambah Baris"</button> untuk menambah.
+                                    </td>
                                 </tr>
                             </template>
                         </tbody>
@@ -315,11 +373,11 @@
             </div>
 
             <!-- Hidden fields for submission -->
-            <template x-for="(item, index) in items" :key="'submit-'+item.id">
+            <template x-for="(item, index) in getSubmittableItems()" :key="'submit-'+item.id">
                 <div>
                     <input type="hidden" :name="`items[${index}][kategori_layanan]`" :value="item.kategori_layanan">
                     <input type="hidden" :name="`items[${index}][deskripsi]`" :value="item.deskripsi">
-                    <input type="hidden" :name="`items[${index}][keterangan]`" :value="item.keterangan">
+                    <input type="hidden" :name="`items[${index}][keterangan]`" :value="item.kategori_layanan === 'Jenis Pekerjaan' ? (item.has_keterangan ? (item.keterangan || '') : '') : (item.keterangan || '')">
                     <input type="hidden" :name="`items[${index}][qty]`" :value="item.qty">
                     <input type="hidden" :name="`items[${index}][harga_satuan]`" :value="item.harga_satuan">
                 </div>
@@ -457,11 +515,13 @@
                     'kategori_layanan' => $item->kategori_layanan ?? 'Fee Pekerjaan',
                     'deskripsi' => $item->deskripsi,
                     'keterangan' => $item->keterangan ?? '',
+                    'has_keterangan' => !empty($item->keterangan),
                     'qty' => (float) $item->qty,
                     'harga_satuan' => (float) $item->harga_satuan,
                     'is_custom' => $isCustom
                 ];
             })) !!},
+            useJenisPekerjaanTable: {{ $penawaran->items->where('kategori_layanan', 'Jenis Pekerjaan')->count() > 0 ? 'true' : 'false' }},
             diskon: {{ old('diskon', (float) ($penawaran->diskon ?? 0)) }},
             subtotal: 0,
             pajak_persen: {{ old('pajak_persen', $penawaran->pajak_persen ?? 0) }},
@@ -486,6 +546,14 @@
             },
 
             init() {
+                if (this.items.length > 0) {
+                    this.items = this.items.map(item => ({
+                        ...item,
+                        has_keterangan: item.has_keterangan !== undefined ? item.has_keterangan : !!(item.keterangan && item.keterangan.trim() !== '')
+                    }));
+                    this.useJenisPekerjaanTable = this.items.some(i => i.kategori_layanan === 'Jenis Pekerjaan');
+                }
+
                 this.calculate();
                 
                 // Set filter divisi based on perihal
@@ -503,12 +571,47 @@
                 });
             },
 
+            toggleJenisPekerjaanTable() {
+                this.useJenisPekerjaanTable = !this.useJenisPekerjaanTable;
+                if (this.useJenisPekerjaanTable && this.items.filter(i => i.kategori_layanan === 'Jenis Pekerjaan').length === 0) {
+                    this.addItem('Jenis Pekerjaan');
+                }
+            },
+
+            toggleItemDescription(item) {
+                item.has_keterangan = !item.has_keterangan;
+                if (!item.has_keterangan) {
+                    item.keterangan = '';
+                }
+            },
+
+            removeItemDescription(item) {
+                item.has_keterangan = false;
+                item.keterangan = '';
+            },
+
+            getSubmittableItems() {
+                return this.items.filter(item => {
+                    if (item.kategori_layanan === 'Jenis Pekerjaan') {
+                        return this.useJenisPekerjaanTable && item.deskripsi && item.deskripsi.trim() !== '';
+                    }
+                    if (item.kategori_layanan === 'Fee Pekerjaan') {
+                        return item.deskripsi && item.deskripsi.trim() !== '';
+                    }
+                    if (item.kategori_layanan === 'Data Yang Diperlukan') {
+                        return item.deskripsi && item.deskripsi.trim() !== '';
+                    }
+                    return true;
+                });
+            },
+
             addItem(kategori) {
                 this.items.push({ 
                     id: Date.now() + Math.random(), 
                     kategori_layanan: kategori, 
                     deskripsi: '', 
                     keterangan: '', 
+                    has_keterangan: false,
                     qty: 1, 
                     harga_satuan: 0,
                     is_custom: false

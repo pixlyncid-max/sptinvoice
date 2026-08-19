@@ -432,8 +432,15 @@
                                 <tbody>
                                     @foreach($jenisPekerjaanManual as $i => $item)
                                         <tr>
-                                            <td style="text-align: center;">{{ $i + 1 }}.</td>
-                                            <td>{{ $item->deskripsi }}</td>
+                                            <td style="text-align: center; vertical-align: top;">{{ $i + 1 }}.</td>
+                                            <td style="text-align: left; vertical-align: top;">
+                                                <div style="font-weight: 600;">{{ $item->deskripsi }}</div>
+                                                @if(!empty($item->keterangan))
+                                                    <div style="font-size: 9pt; color: #475569; margin-top: 3px; font-weight: normal; line-height: 1.4;">
+                                                        {!! nl2br(e($item->keterangan)) !!}
+                                                    </div>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
