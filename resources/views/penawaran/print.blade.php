@@ -253,6 +253,7 @@
 
         // Group items by kategori_layanan
         $jenisPekerjaanManual = $penawaran->items->where('kategori_layanan', 'Jenis Pekerjaan')->values();
+        $jenisPekerjaan2Manual = $penawaran->items->where('kategori_layanan', 'Jenis Pekerjaan 2')->values();
         $feePekerjaan = $penawaran->items->where('kategori_layanan', 'Fee Pekerjaan')->values();
         $dataDiperlukanManual = $penawaran->items->where('kategori_layanan', 'Data Yang Diperlukan')->values();
 
@@ -431,6 +432,32 @@
                                 </thead>
                                 <tbody>
                                     @foreach($jenisPekerjaanManual as $i => $item)
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: top;">{{ $i + 1 }}.</td>
+                                            <td style="text-align: left; vertical-align: top;">
+                                                <div style="font-weight: 600;">{{ $item->deskripsi }}</div>
+                                                @if(!empty($item->keterangan))
+                                                    <div style="font-size: 9pt; color: #475569; margin-top: 3px; font-weight: normal; line-height: 1.4;">
+                                                        {!! nl2br(e($item->keterangan)) !!}
+                                                    </div>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
+
+                        @if($jenisPekerjaan2Manual->count() > 0)
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 35px; text-align: center;">NO</th>
+                                        <th>JENIS PEKERJAAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($jenisPekerjaan2Manual as $i => $item)
                                         <tr>
                                             <td style="text-align: center; vertical-align: top;">{{ $i + 1 }}.</td>
                                             <td style="text-align: left; vertical-align: top;">

@@ -30,7 +30,7 @@ class StorePenawaranRequest extends FormRequest
             'items' => 'required|array|min:1',
             'items.*.deskripsi' => 'required|string|max:255',
             'items.*.keterangan' => 'nullable|string|max:1000',
-            'items.*.kategori_layanan' => 'required|string|in:Jasa Pembuatan Aset Digital,Jasa Digital Marketing,Jasa Perpajakan,Jasa Perizinan,Fee Pekerjaan,Jenis Pekerjaan,Data Yang Diperlukan',
+            'items.*.kategori_layanan' => 'required|string|in:Jasa Pembuatan Aset Digital,Jasa Digital Marketing,Jasa Perpajakan,Jasa Perizinan,Fee Pekerjaan,Jenis Pekerjaan,Jenis Pekerjaan 2,Data Yang Diperlukan',
             'items.*.qty' => 'required|numeric|min:0',
             'items.*.harga_satuan' => 'required|numeric|min:0',
         ];
