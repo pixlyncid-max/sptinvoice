@@ -101,39 +101,15 @@
                             <h3 class="text-md font-bold text-slate-800 uppercase tracking-wider">1. Jenis Pekerjaan</h3>
                             <p class="text-xs text-slate-500 mt-0.5">Daftar item pekerjaan atau rincian layanan yang ditawarkan ke client.</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <!-- Toggle Button Gunakan Tabel 1 -->
-                            <button type="button" 
-                                @click="toggleJenisPekerjaanTable()" 
-                                :class="useJenisPekerjaanTable ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100' : 'bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200'" 
-                                class="inline-flex items-center px-3 py-1.5 border text-xs font-semibold rounded-md shadow-sm transition-all">
-                                <span class="w-2 h-2 rounded-full mr-1.5" :class="useJenisPekerjaanTable ? 'bg-emerald-500' : 'bg-slate-400'"></span>
-                                <span x-text="useJenisPekerjaanTable ? 'Gunakan Tabel (Aktif)' : 'Gunakan Tabel (Nonaktif)'"></span>
-                            </button>
-                            
-                            <!-- Tambah Baris Button Tabel 1 -->
-                            <button type="button" 
-                                x-show="useJenisPekerjaanTable" 
-                                @click="addItem('Jenis Pekerjaan')" 
-                                class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primary hover:bg-primary-dark shadow-sm transition-all">
-                                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                Tambah Baris
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- When Table 1 is Disabled -->
-                    <div x-show="!useJenisPekerjaanTable" class="p-5 bg-slate-50 border border-dashed border-slate-300 rounded-lg text-center">
-                        <svg class="mx-auto h-8 w-8 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        <p class="text-sm font-medium text-slate-700">Tabel Jenis Pekerjaan Nonaktif</p>
-                        <p class="text-xs text-slate-500 mt-1">Bagian ini tidak akan mencantumkan tabel rincian jenis pekerjaan pada dokumen penawaran.</p>
-                        <button type="button" @click="toggleJenisPekerjaanTable()" class="mt-3 inline-flex items-center px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition">
-                            + Aktifkan & Gunakan Tabel
+                        <button type="button" 
+                            @click="addItem('Jenis Pekerjaan')" 
+                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primary hover:bg-primary-dark shadow-sm transition-all">
+                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Tambah Baris
                         </button>
                     </div>
 
-                    <!-- When Table 1 is Enabled -->
-                    <div x-show="useJenisPekerjaanTable" class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm">
+                    <div class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm">
                         <table class="min-w-full divide-y divide-slate-200">
                             <thead class="bg-slate-50">
                                 <tr>
@@ -152,9 +128,9 @@
                                                 <div class="flex items-center gap-2">
                                                     <input type="text" 
                                                         x-model="item.deskripsi" 
-                                                        :required="useJenisPekerjaanTable"
                                                         class="focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border font-medium" 
-                                                        placeholder="Contoh: Pembuatan Akun Coretax">
+                                                        placeholder="Contoh: Pembuatan Akun Coretax"
+                                                        required>
                                                     <button type="button" 
                                                         @click="toggleItemDescription(item)"
                                                         :class="item.has_keterangan ? 'bg-primary text-white border-primary hover:bg-primary-dark' : 'bg-slate-50 text-slate-600 border-slate-300 hover:bg-slate-100'"
@@ -589,7 +565,6 @@
                 { id: 'initial-2', kategori_layanan: 'Fee Pekerjaan', deskripsi: '', keterangan: '', has_keterangan: false, qty: 1, harga_satuan: 0 },
                 { id: 'initial-3', kategori_layanan: 'Data Yang Diperlukan', deskripsi: '', keterangan: '', has_keterangan: false, qty: 1, harga_satuan: 0 }
             ],
-            useJenisPekerjaanTable: true,
             useJenisPekerjaan2Table: false,
             diskon: {{ old('diskon', 0) }},
             subtotal: 0,
@@ -621,7 +596,6 @@
                         id: 'old-' + idx,
                         has_keterangan: !!(item.keterangan && item.keterangan.trim() !== '')
                     }));
-                    this.useJenisPekerjaanTable = this.items.some(i => i.kategori_layanan === 'Jenis Pekerjaan');
                     this.useJenisPekerjaan2Table = this.items.some(i => i.kategori_layanan === 'Jenis Pekerjaan 2');
                 @endif
                 
@@ -638,13 +612,6 @@
                     this.filterDivisi = this.getDivisiFromPerihal(value);
                     this.fetchRateCards();
                 });
-            },
-
-            toggleJenisPekerjaanTable() {
-                this.useJenisPekerjaanTable = !this.useJenisPekerjaanTable;
-                if (this.useJenisPekerjaanTable && this.items.filter(i => i.kategori_layanan === 'Jenis Pekerjaan').length === 0) {
-                    this.addItem('Jenis Pekerjaan');
-                }
             },
 
             toggleJenisPekerjaan2Table() {
@@ -669,7 +636,7 @@
             getSubmittableItems() {
                 return this.items.filter(item => {
                     if (item.kategori_layanan === 'Jenis Pekerjaan') {
-                        return this.useJenisPekerjaanTable && item.deskripsi && item.deskripsi.trim() !== '';
+                        return item.deskripsi && item.deskripsi.trim() !== '';
                     }
                     if (item.kategori_layanan === 'Jenis Pekerjaan 2') {
                         return this.useJenisPekerjaan2Table && item.deskripsi && item.deskripsi.trim() !== '';
