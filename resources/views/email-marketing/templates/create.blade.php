@@ -4,16 +4,19 @@
 
 @section('content')
 <div class="max-w-4xl bg-white shadow-sm rounded-lg border border-slate-200 p-6" x-data="{
-    bodyText: '{{ old('body', "Halo {{name}},\n\nKami dari SPT Invoice ingin menyampaikan informasi kepada {{company}}.\n\nSalam,\nTim SPT Invoice\n\n---\nJika Anda tidak ingin menerima email ini lagi, silakan <a href=\"{{unsubscribe_url}}\">Unsubscribe di sini</a>.") }}',
+    bodyText: @js(old('body', "Halo {{name}},\n\nKami dari SPT Invoice ingin menyampaikan informasi kepada {{company}}.\n\nSalam,\nTim SPT Invoice\n\n---\nJika Anda tidak ingin menerima email ini lagi, silakan <a href=\"{{unsubscribe_url}}\">Unsubscribe di sini</a>.")),
     insertTag(tag) {
         const textarea = document.getElementById('template_body');
+        if (!textarea) return;
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const text = textarea.value;
         this.bodyText = text.substring(0, start) + tag + text.substring(end);
         textarea.value = this.bodyText;
         textarea.focus();
-        textarea.setSelectionRange(start + tag.length, start + tag.length);
+        setTimeout(() => {
+            textarea.setSelectionRange(start + tag.length, start + tag.length);
+        }, 50);
     }
 }">
     <form action="{{ route('email-marketing.templates.store') }}" method="POST">
@@ -34,7 +37,7 @@
             </div>
 
             <div>
-                <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center justify-between mb-1.5 flex-wrap gap-2">
                     <label for="template_body" class="block text-sm font-medium text-slate-700">Isi Email (HTML / Teks) <span class="text-red-500">*</span></label>
                     
                     <!-- Variable Insert Buttons -->

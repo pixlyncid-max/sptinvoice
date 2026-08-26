@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="max-w-4xl" x-data="{
-    campaignName: '{{ old('name', '') }}',
-    templateId: '{{ old('template_id', '') }}',
-    subject: '{{ old('subject', '') }}',
-    recipientType: '{{ old('recipient_type', 'all_subscribed') }}',
-    selectedContacts: {{ json_encode(old('selected_contacts', [])) }},
+    campaignName: @js(old('name', '')),
+    templateId: @js(old('template_id', '')),
+    subject: @js(old('subject', '')),
+    recipientType: @js(old('recipient_type', 'all_subscribed')),
+    selectedContacts: @js(old('selected_contacts', [])),
     totalSubscribed: {{ $totalSubscribed }},
-    templates: {{ json_encode($templates->map(function($t) { return ['id' => $t->id, 'name' => $t->name, 'subject' => $t->subject, 'body' => $t->body]; })) }},
+    templates: @js($templates->map(function($t) { return ['id' => (string)$t->id, 'name' => $t->name, 'subject' => $t->subject ?? '', 'body' => $t->body ?? '']; })),
     contactSearch: '',
 
     previewModalOpen: false,
@@ -26,14 +26,14 @@
     },
 
     onTemplateChange() {
-        const found = this.templates.find(t => t.id == this.templateId);
-        if (found && (!this.subject || this.subject === '')) {
+        const found = this.templates.find(t => String(t.id) === String(this.templateId));
+        if (found && (!this.subject || this.subject.trim() === '')) {
             this.subject = found.subject || '';
         }
     },
 
     openPreview() {
-        const found = this.templates.find(t => t.id == this.templateId);
+        const found = this.templates.find(t => String(t.id) === String(this.templateId));
         if (!found) {
             alert('Silakan pilih template terlebih dahulu.');
             return;
@@ -47,15 +47,15 @@
         let sub = this.subject || found.subject || '';
         let bod = found.body || '';
 
-        sub = sub.replaceAll('{{name}}', sampleName)
-                 .replaceAll('{{email}}', sampleEmail)
-                 .replaceAll('{{company}}', sampleCompany)
-                 .replaceAll('{{unsubscribe_url}}', sampleUnsubscribe);
+        sub = sub.replace(/\{\{name\}\}/g, sampleName)
+                 .replace(/\{\{email\}\}/g, sampleEmail)
+                 .replace(/\{\{company\}\}/g, sampleCompany)
+                 .replace(/\{\{unsubscribe_url\}\}/g, sampleUnsubscribe);
 
-        bod = bod.replaceAll('{{name}}', sampleName)
-                 .replaceAll('{{email}}', sampleEmail)
-                 .replaceAll('{{company}}', sampleCompany)
-                 .replaceAll('{{unsubscribe_url}}', sampleUnsubscribe);
+        bod = bod.replace(/\{\{name\}\}/g, sampleName)
+                 .replace(/\{\{email\}\}/g, sampleEmail)
+                 .replace(/\{\{company\}\}/g, sampleCompany)
+                 .replace(/\{\{unsubscribe_url\}\}/g, sampleUnsubscribe);
 
         this.previewSubject = sub;
         this.previewBody = bod;
@@ -63,26 +63,50 @@
     },
 
     openConfirm() {
-        if (!this.campaignName) {
+        if (!this.campaignName || this.campaignName.trim() === '') {
             alert('Nama campaign wajib diisi.');
             return;
         }
         if (!this.templateId) {
-            alert('Template wajib dipilih.');
+            alert('Template email wajib dipilih.');
             return;
         }
-        if (!this.subject) {
+        if (!this.subject || this.subject.trim() === '') {
             alert('Subject email wajib diisi.');
             return;
         }
         if (this.recipientCount === 0) {
-            alert('Pilih minimal 1 penerima.');
+            alert('Belum ada kontak penerima yang dipilih atau kontak berstatus subscribed masih 0. Tambahkan kontak terlebih dahulu.');
             return;
         }
 
         this.confirmModalOpen = true;
     }
 }">
+    @if($templates->isEmpty())
+    <div class="mb-5 p-4 bg-amber-50 border border-amber-300 rounded-lg text-sm text-amber-800 flex items-center justify-between">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <span>Anda belum memiliki <strong>Template Email</strong>. Buat template terlebih dahulu sebelum membuat campaign.</span>
+        </div>
+        <a href="{{ route('email-marketing.templates.create') }}" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-xs font-semibold whitespace-nowrap">
+            + Buat Template
+        </a>
+    </div>
+    @endif
+
+    @if($totalSubscribed === 0)
+    <div class="mb-5 p-4 bg-blue-50 border border-blue-300 rounded-lg text-sm text-blue-800 flex items-center justify-between">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>Belum ada kontak aktif (Subscribed). Tambahkan kontak atau lakukan import data kontak terlebih dahulu.</span>
+        </div>
+        <a href="{{ route('email-marketing.contacts.create') }}" class="px-3 py-1 bg-primary hover:bg-primary-dark text-white rounded text-xs font-semibold whitespace-nowrap">
+            + Tambah Kontak
+        </a>
+    </div>
+    @endif
+
     <form id="campaignForm" action="{{ route('email-marketing.campaigns.store') }}" method="POST">
         @csrf
 
@@ -105,7 +129,7 @@
                         <select name="template_id" id="template_id" x-model="templateId" @change="onTemplateChange()" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border">
                             <option value="">-- Pilih Template --</option>
                             @foreach ($templates as $template)
-                            <option value="{{ $template->id }}">{{ $template->name }}</option>
+                            <option value="{{ $template->id }}" {{ old('template_id') == $template->id ? 'selected' : '' }}>{{ $template->name }}</option>
                             @endforeach
                         </select>
                         @error('template_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -153,13 +177,13 @@
                         <div class="mb-3 flex items-center justify-between">
                             <input type="text" x-model="contactSearch" placeholder="Cari kontak..." class="text-xs rounded border-slate-300 py-1.5 px-3 w-64 border">
                             <div class="text-xs space-x-2">
-                                <button type="button" @click="selectedContacts = {{ json_encode($subscribedContacts->pluck('id')->toArray()) }}" class="text-primary hover:underline">Pilih Semua</button>
+                                <button type="button" @click="selectedContacts = {{ json_encode($subscribedContacts->pluck('id')->toArray()) }}" class="text-primary hover:underline font-medium">Pilih Semua</button>
                                 <button type="button" @click="selectedContacts = []" class="text-slate-500 hover:underline">Hapus Pilihan</button>
                             </div>
                         </div>
 
                         <div class="max-h-60 overflow-y-auto space-y-1.5 bg-white p-3 rounded border border-slate-200">
-                            @foreach ($subscribedContacts as $contact)
+                            @forelse ($subscribedContacts as $contact)
                             <label class="flex items-center p-1.5 hover:bg-slate-50 rounded cursor-pointer text-xs" x-show="contactSearch === '' || '{{ strtolower($contact->name . ' ' . $contact->email . ' ' . $contact->company) }}'.includes(contactSearch.toLowerCase())">
                                 <input type="checkbox" name="selected_contacts[]" value="{{ $contact->id }}" x-model="selectedContacts" class="rounded border-slate-300 text-primary focus:ring-primary h-3.5 w-3.5 mr-2.5">
                                 <span class="font-medium text-slate-800">{{ $contact->name }}</span>
@@ -170,7 +194,9 @@
                                 <span class="text-slate-600 font-mono text-[11px]">({{ $contact->company }})</span>
                                 @endif
                             </label>
-                            @endforeach
+                            @empty
+                            <p class="text-xs text-slate-400 py-3 text-center">Belum ada kontak aktif.</p>
+                            @endforelse
                         </div>
                     </div>
                 </div>
