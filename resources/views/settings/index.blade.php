@@ -9,29 +9,37 @@
         @method('PATCH')
 
         @foreach($settings as $group => $items)
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <h3 class="text-lg font-semibold text-gray-800 uppercase tracking-wider">{{ $group }}</h3>
+        <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-slate-200 mb-6">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">{{ $group }}</h3>
+                @if(str_contains(strtolower($group), 'sosial') || str_contains(strtolower($group), 'email'))
+                <span class="text-xs text-slate-500">Tautan ini otomatis digunakan pada Footer Broadcast Email</span>
+                @endif
             </div>
             <div class="p-6 space-y-4">
                 @foreach($items as $setting)
                 <div>
-                    <label for="setting_{{ $setting->key }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ ucwords(str_replace('_', ' ', $setting->key)) }}
+                    <label for="setting_{{ $setting->key }}" class="block text-xs font-semibold text-slate-700 mb-1">
+                        {{ ucwords(str_replace(['_', 'url'], [' ', 'URL'], $setting->key)) }}
                     </label>
-                    <div class="relative rounded-md shadow-sm">
-                        @if(str_contains($setting->key, 'persen'))
-                        <input type="number" step="0.01" name="settings[{{ $setting->key }}]" id="setting_{{ $setting->key }}" value="{{ $setting->value }}" class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">%</span>
+
+                    @if(str_contains($setting->key, 'url') || str_contains($setting->key, 'link') || str_contains($setting->key, 'whatsapp') || str_contains($setting->key, 'social') || str_contains($setting->key, 'instagram') || str_contains($setting->key, 'facebook') || str_contains($setting->key, 'threads') || str_contains($setting->key, 'tiktok'))
+                        <input type="text" name="settings[{{ $setting->key }}]" id="setting_{{ $setting->key }}" value="{{ $setting->value }}" class="block w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary text-sm py-2 px-3 border" placeholder="https://...">
+                    @elseif(str_contains($setting->key, 'persen'))
+                        <div class="relative rounded-md shadow-sm">
+                            <input type="number" step="0.01" name="settings[{{ $setting->key }}]" id="setting_{{ $setting->key }}" value="{{ $setting->value }}" class="block w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary text-sm py-2 px-3 border">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-slate-500 text-sm">%</span>
+                            </div>
                         </div>
-                        @else
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">Rp</span>
+                    @else
+                        <div class="relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <span class="text-slate-500 text-sm">Rp</span>
+                            </div>
+                            <input type="number" name="settings[{{ $setting->key }}]" id="setting_{{ $setting->key }}" value="{{ $setting->value }}" class="block w-full pl-10 rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary text-sm py-2 px-3 border">
                         </div>
-                        <input type="number" name="settings[{{ $setting->key }}]" id="setting_{{ $setting->key }}" value="{{ $setting->value }}" class="block w-full pl-10 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @endif
-                    </div>
+                    @endif
                 </div>
                 @endforeach
             </div>
@@ -39,7 +47,7 @@
         @endforeach
 
         <div class="flex justify-end">
-            <button type="submit" class="inline-flex items-center px-6 py-3 bg-indigo-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-lg">
+            <button type="submit" class="inline-flex items-center px-6 py-2.5 bg-primary hover:bg-primary-dark border border-transparent rounded-md font-semibold text-sm text-white shadow-sm transition">
                 Simpan Perubahan
             </button>
         </div>

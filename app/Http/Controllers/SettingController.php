@@ -17,11 +17,11 @@ class SettingController extends Controller
     {
         $data = $request->validate([
             'settings' => 'required|array',
-            'settings.*' => 'required',
+            'settings.*' => 'nullable|string',
         ]);
 
         foreach ($data['settings'] as $key => $value) {
-            Setting::where('key', $key)->update(['value' => $value]);
+            Setting::where('key', $key)->update(['value' => $value ?? '']);
         }
 
         return back()->with('success', 'Pengaturan berhasil diperbarui.');

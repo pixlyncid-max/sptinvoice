@@ -256,13 +256,13 @@
                         <div class="border-t border-slate-100">
                             <img src="{{ url('storage/footer-email-fix.png') }}" alt="Konsultan Borneo" class="w-full h-auto block" onerror="this.style.display='none'">
                             <div class="bg-slate-900 text-white p-4 text-center text-xs">
-                                <p class="text-slate-400 text-[11px] font-semibold uppercase tracking-wider mb-2">Terhubung Dengan Kami:</p>
-                                <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                                    <span class="px-2 py-1 bg-emerald-600 text-white rounded text-[10px] font-bold">WhatsApp</span>
-                                    <span class="px-2 py-1 bg-pink-600 text-white rounded text-[10px] font-bold">Instagram</span>
-                                    <span class="px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">Facebook</span>
-                                    <span class="px-2 py-1 bg-black text-white border border-slate-700 rounded text-[10px] font-bold">Threads</span>
-                                    <span class="px-2 py-1 bg-slate-800 text-white rounded text-[10px] font-bold">TikTok</span>
+                                <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-2.5">Terhubung Dengan Kami:</p>
+                                <div class="flex items-center justify-center gap-3">
+                                    <img src="{{ url('images/social/whatsapp.png') }}" class="w-8 h-8 rounded-full" alt="WhatsApp">
+                                    <img src="{{ url('images/social/instagram.png') }}" class="w-8 h-8 rounded-full" alt="Instagram">
+                                    <img src="{{ url('images/social/facebook.png') }}" class="w-8 h-8 rounded-full" alt="Facebook">
+                                    <img src="{{ url('images/social/threads.png') }}" class="w-8 h-8 rounded-full" alt="Threads">
+                                    <img src="{{ url('images/social/tiktok.png') }}" class="w-8 h-8 rounded-full" alt="TikTok">
                                 </div>
                             </div>
                         </div>

@@ -1,3 +1,10 @@
+@php
+    $whatsappUrl = \App\Models\Setting::get('social_whatsapp_url', 'https://wa.me/6285711533331');
+    $instagramUrl = \App\Models\Setting::get('social_instagram_url', 'https://www.instagram.com/konsultanborneo');
+    $facebookUrl = \App\Models\Setting::get('social_facebook_url', 'https://www.facebook.com/konsultanborneo');
+    $threadsUrl = \App\Models\Setting::get('social_threads_url', 'https://www.threads.net/@konsultanborneo');
+    $tiktokUrl = \App\Models\Setting::get('social_tiktok_url', 'https://www.tiktok.com/@konsultanborneo');
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -18,50 +25,61 @@
             <img src="{{ url('storage/footer-email-fix.png') }}" alt="Konsultan Borneo" style="width: 100%; max-width: 100%; height: auto; display: block; border: 0;" />
         </div>
 
-        <!-- Social Media Buttons -->
-        <div style="background-color: #0f172a; padding: 22px 20px; text-align: center;">
-            <p style="color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 12px 0;">
-                Terhubung Dengan Kami:
+        <!-- Social Media Logos & Footer Section -->
+        <div style="background-color: #0b132b; padding: 24px 20px; text-align: center;">
+            <p style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 14px 0;">
+                Terhubung Dengan Kami
             </p>
             
+            <!-- Social Media Official Icons Table -->
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
                 <tr>
-                    <!-- WhatsApp -->
-                    <td style="padding: 0 6px;">
-                        <a href="https://wa.me/6285711533331" target="_blank" style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold;">
-                            💬 WhatsApp
+                    @if($whatsappUrl)
+                    <td style="padding: 0 8px;" align="center" valign="middle">
+                        <a href="{{ $whatsappUrl }}" target="_blank" title="WhatsApp" style="text-decoration: none; display: inline-block;">
+                            <img src="{{ url('images/social/whatsapp.png') }}" width="36" height="36" alt="WhatsApp" style="display: block; border: 0; width: 36px; height: 36px; border-radius: 50%;" />
                         </a>
                     </td>
-                    <!-- Instagram -->
-                    <td style="padding: 0 6px;">
-                        <a href="https://www.instagram.com/konsultanborneo" target="_blank" style="display: inline-block; background-color: #E1306C; color: #ffffff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold;">
-                            📷 Instagram
+                    @endif
+
+                    @if($instagramUrl)
+                    <td style="padding: 0 8px;" align="center" valign="middle">
+                        <a href="{{ $instagramUrl }}" target="_blank" title="Instagram" style="text-decoration: none; display: inline-block;">
+                            <img src="{{ url('images/social/instagram.png') }}" width="36" height="36" alt="Instagram" style="display: block; border: 0; width: 36px; height: 36px; border-radius: 50%;" />
                         </a>
                     </td>
-                    <!-- Facebook -->
-                    <td style="padding: 0 6px;">
-                        <a href="https://www.facebook.com/konsultanborneo" target="_blank" style="display: inline-block; background-color: #1877F2; color: #ffffff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold;">
-                            📘 Facebook
+                    @endif
+
+                    @if($facebookUrl)
+                    <td style="padding: 0 8px;" align="center" valign="middle">
+                        <a href="{{ $facebookUrl }}" target="_blank" title="Facebook" style="text-decoration: none; display: inline-block;">
+                            <img src="{{ url('images/social/facebook.png') }}" width="36" height="36" alt="Facebook" style="display: block; border: 0; width: 36px; height: 36px; border-radius: 50%;" />
                         </a>
                     </td>
-                    <!-- Threads -->
-                    <td style="padding: 0 6px;">
-                        <a href="https://www.threads.net/@konsultanborneo" target="_blank" style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid #334155;">
-                            🧵 Threads
+                    @endif
+
+                    @if($threadsUrl)
+                    <td style="padding: 0 8px;" align="center" valign="middle">
+                        <a href="{{ $threadsUrl }}" target="_blank" title="Threads" style="text-decoration: none; display: inline-block;">
+                            <img src="{{ url('images/social/threads.png') }}" width="36" height="36" alt="Threads" style="display: block; border: 0; width: 36px; height: 36px; border-radius: 50%;" />
                         </a>
                     </td>
-                    <!-- TikTok -->
-                    <td style="padding: 0 6px;">
-                        <a href="https://www.tiktok.com/@konsultanborneo" target="_blank" style="display: inline-block; background-color: #010101; color: #ffffff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid #334155;">
-                            🎵 TikTok
+                    @endif
+
+                    @if($tiktokUrl)
+                    <td style="padding: 0 8px;" align="center" valign="middle">
+                        <a href="{{ $tiktokUrl }}" target="_blank" title="TikTok" style="text-decoration: none; display: inline-block;">
+                            <img src="{{ url('images/social/tiktok.png') }}" width="36" height="36" alt="TikTok" style="display: block; border: 0; width: 36px; height: 36px; border-radius: 50%;" />
                         </a>
                     </td>
+                    @endif
                 </tr>
             </table>
 
-            <div style="margin-top: 16px; font-size: 11px; color: #64748b; line-height: 1.5;">
-                <p style="margin: 0;">&copy; {{ date('Y') }} Konsultan Borneo. All rights reserved.</p>
-                <p style="margin: 4px 0 0 0;">Konsultasi Perpajakan, Keuangan, Perizinan & Digital</p>
+            <div style="margin-top: 18px; font-size: 11px; color: #64748b; line-height: 1.6;">
+                <p style="margin: 0; color: #cbd5e1; font-weight: 500;">Konsultan Borneo</p>
+                <p style="margin: 2px 0 0 0; color: #64748b;">Konsultasi Perpajakan, Keuangan, Perizinan & Digital</p>
+                <p style="margin: 6px 0 0 0; font-size: 10px; color: #475569;">&copy; {{ date('Y') }} All rights reserved.</p>
             </div>
         </div>
     </div>
