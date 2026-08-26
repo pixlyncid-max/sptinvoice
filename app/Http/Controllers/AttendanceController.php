@@ -123,8 +123,8 @@ class AttendanceController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $month = $request->get('month', date('m'));
-        $year = $request->get('year', date('Y'));
+        $month = (int)$request->get('month', date('m'));
+        $year = (int)$request->get('year', date('Y'));
         
         list($startDate, $endDate, $period) = $this->getAttendancePeriod($month, $year);
 
@@ -132,7 +132,7 @@ class AttendanceController extends Controller
             $query->whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
         }])->orderBy('id', 'asc')->get();
 
-        $pdf = Pdf::loadView('attendance.pdf', compact('employees', 'month', 'year', 'period'))
+        $pdf = Pdf::loadView('attendance.pdf', compact('employees', 'month', 'year', 'period', 'startDate', 'endDate'))
                   ->setPaper('a4', 'landscape');
         
         return $pdf->download("Absensi-{$month}-{$year}.pdf");
@@ -140,8 +140,8 @@ class AttendanceController extends Controller
 
     public function exportExcel(Request $request)
     {
-        $month = $request->get('month', date('m'));
-        $year = $request->get('year', date('Y'));
+        $month = (int)$request->get('month', date('m'));
+        $year = (int)$request->get('year', date('Y'));
         
         list($startDate, $endDate, $period) = $this->getAttendancePeriod($month, $year);
 
@@ -149,9 +149,9 @@ class AttendanceController extends Controller
             $query->whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
         }])->orderBy('id', 'asc')->get();
 
-        header("Content-Type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment; filename=Absensi-{$month}-{$year}.xls");
-        
-        return view('attendance.excel', compact('employees', 'month', 'year', 'period'));
+        return response()
+            ->view('attendance.excel', compact('employees', 'month', 'year', 'period', 'startDate', 'endDate'))
+            ->header('Content-Type', 'application/vnd.ms-excel; charset=utf-8')
+            ->header('Content-Disposition', "attachment; filename=Absensi-{$month}-{$year}.xls");
     }
 }
