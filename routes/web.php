@@ -4,6 +4,11 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DivisionController;
+use App\Http\Controllers\EmailMarketing\EmailCampaignController;
+use App\Http\Controllers\EmailMarketing\EmailContactController;
+use App\Http\Controllers\EmailMarketing\EmailLogController;
+use App\Http\Controllers\EmailMarketing\EmailTemplateController;
+use App\Http\Controllers\EmailMarketing\UnsubscribeController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GaaDataController;
 use App\Http\Controllers\InventarisController;
@@ -100,6 +105,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('inventaris-categories', \App\Http\Controllers\InventarisCategoryController::class)->except(['create', 'show', 'edit']);
         Route::get('inventaris/{inventaris}/qr', [InventarisController::class, 'showQr'])->name('inventaris.qr');
 
+        // Email Marketing (Contacts, Templates, Campaigns, Logs)
+        Route::prefix('email-marketing')->name('email-marketing.')->group(function () {
+            // Contacts
+            Route::get('contacts/template', [EmailContactController::class, 'downloadTemplate'])->name('contacts.template');
+            Route::get('contacts/export', [EmailContactController::class, 'exportExcel'])->name('contacts.export');
+            Route::post('contacts/import', [EmailContactController::class, 'importExcel'])->name('contacts.import');
+            Route::delete('contacts/bulk-delete', [EmailContactController::class, 'bulkDelete'])->name('contacts.bulk-delete');
+            Route::patch('contacts/{contact}/toggle-subscription', [EmailContactController::class, 'toggleSubscription'])->name('contacts.toggle-subscription');
+            Route::resource('contacts', EmailContactController::class)->except(['show']);
+
+            // Templates
+            Route::post('templates/{template}/duplicate', [EmailTemplateController::class, 'duplicate'])->name('templates.duplicate');
+            Route::get('templates/{template}/preview', [EmailTemplateController::class, 'preview'])->name('templates.preview');
+            Route::resource('templates', EmailTemplateController::class)->except(['show']);
+
+            // Campaigns
+            Route::post('campaigns/{campaign}/retry-failed', [EmailCampaignController::class, 'retryFailed'])->name('campaigns.retry-failed');
+            Route::resource('campaigns', EmailCampaignController::class)->except(['edit', 'update']);
+
+            // Logs
+            Route::get('logs', [EmailLogController::class, 'index'])->name('logs.index');
+            Route::delete('logs/clear', [EmailLogController::class, 'clear'])->name('logs.clear');
+        });
+
         // Superadmin Routes
         Route::middleware(['superadmin'])->group(function () {
             Route::resource('divisions', DivisionController::class)->except(['show']);
@@ -115,5 +144,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Public QR code scan route (no auth)
 Route::get('inventaris/qr/{kode}', [InventarisController::class, 'qrScan'])->name('inventaris.qr-scan');
+
+// Public Unsubscribe route (no auth)
+Route::get('email/unsubscribe/{token}', [UnsubscribeController::class, 'unsubscribe'])->name('email-marketing.unsubscribe');
+Route::post('email/resubscribe/{token}', [UnsubscribeController::class, 'resubscribe'])->name('email-marketing.resubscribe');
 
 require __DIR__.'/auth.php';

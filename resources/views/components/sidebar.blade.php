@@ -148,6 +148,34 @@
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                     <span class="ml-3">Inventaris</span>
                 </a>
+
+                <div class="pt-4 pb-2">
+                    <p class="text-[10px] uppercase text-white/30 font-semibold tracking-widest px-4 mb-2">Email Marketing</p>
+                </div>
+
+                <!-- Contacts -->
+                <a href="{{ route('email-marketing.contacts.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.contacts.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span class="ml-3">Contacts</span>
+                </a>
+
+                <!-- Templates -->
+                <a href="{{ route('email-marketing.templates.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.templates.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                    <span class="ml-3">Templates</span>
+                </a>
+
+                <!-- Campaigns -->
+                <a href="{{ route('email-marketing.campaigns.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.campaigns.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <span class="ml-3">Campaigns</span>
+                </a>
+
+                <!-- Email Logs -->
+                <a href="{{ route('email-marketing.logs.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.logs.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span class="ml-3">Email Logs</span>
+                </a>
             </nav>
 
             <div class="mt-8">
@@ -216,6 +244,34 @@
                     <a href="{{ route('users.index') }}" class="sidebar-nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         <span class="ml-3">Kelola Admin</span>
+                    </a>
+
+                    <div class="pt-4 pb-2">
+                        <p class="text-[10px] uppercase text-white/30 font-semibold tracking-widest px-4 mb-2">Email Marketing</p>
+                    </div>
+
+                    <!-- Contacts -->
+                    <a href="{{ route('email-marketing.contacts.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.contacts.*') ? 'active' : '' }}">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span class="ml-3">Contacts</span>
+                    </a>
+
+                    <!-- Templates -->
+                    <a href="{{ route('email-marketing.templates.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.templates.*') ? 'active' : '' }}">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                        <span class="ml-3">Templates</span>
+                    </a>
+
+                    <!-- Campaigns -->
+                    <a href="{{ route('email-marketing.campaigns.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.campaigns.*') ? 'active' : '' }}">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        <span class="ml-3">Campaigns</span>
+                    </a>
+
+                    <!-- Email Logs -->
+                    <a href="{{ route('email-marketing.logs.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.logs.*') ? 'active' : '' }}">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span class="ml-3">Email Logs</span>
                     </a>
                 </nav>
             </div>

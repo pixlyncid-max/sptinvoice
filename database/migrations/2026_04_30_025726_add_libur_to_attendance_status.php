@@ -12,7 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE attendances MODIFY COLUMN status ENUM('hadir', 'sakit', 'ijin', 'telat_1', 'telat_2', 'libur')");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE attendances MODIFY COLUMN status ENUM('hadir', 'sakit', 'ijin', 'telat_1', 'telat_2', 'libur')");
+        }
     }
 
     /**
@@ -20,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE attendances MODIFY COLUMN status ENUM('hadir', 'sakit', 'ijin', 'telat_1', 'telat_2')");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE attendances MODIFY COLUMN status ENUM('hadir', 'sakit', 'ijin', 'telat_1', 'telat_2')");
+        }
     }
 };

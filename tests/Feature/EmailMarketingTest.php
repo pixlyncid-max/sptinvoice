@@ -1,0 +1,229 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Jobs\SendCampaignEmail;
+use App\Mail\BroadcastMail;
+use App\Models\EmailCampaign;
+use App\Models\EmailCampaignRecipient;
+use App\Models\EmailContact;
+use App\Models\EmailLog;
+use App\Models\EmailTemplate;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
+use Tests\TestCase;
+
+class EmailMarketingTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected User $admin;
+    protected User $karyawan;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $this->karyawan = User::factory()->create([
+            'role' => 'karyawan',
+        ]);
+    }
+
+    public function test_admin_can_access_email_marketing_contacts_index(): void
+    {
+        $response = $this->actingAs($this->admin)->get(route('email-marketing.contacts.index'));
+        $response->assertStatus(200);
+    }
+
+    public function test_karyawan_cannot_access_email_marketing(): void
+    {
+        $response = $this->actingAs($this->karyawan)->get(route('email-marketing.contacts.index'));
+        $response->assertRedirect(route('gaa.index'));
+    }
+
+    public function test_admin_can_create_contact_and_duplicate_is_prevented(): void
+    {
+        $response = $this->actingAs($this->admin)->post(route('email-marketing.contacts.store'), [
+            'name' => 'Budi Santoso',
+            'email' => 'budi@example.com',
+            'company' => 'PT Maju Terus',
+            'is_subscribed' => 1,
+        ]);
+
+        $response->assertRedirect(route('email-marketing.contacts.index'));
+        $this->assertDatabaseHas('email_contacts', [
+            'email' => 'budi@example.com',
+            'company' => 'PT Maju Terus',
+            'is_subscribed' => 1,
+        ]);
+
+        // Attempt to create duplicate email
+        $duplicateResponse = $this->actingAs($this->admin)->post(route('email-marketing.contacts.store'), [
+            'name' => 'Budi Duplicate',
+            'email' => 'budi@example.com',
+            'company' => 'PT Lain',
+        ]);
+
+        $duplicateResponse->assertSessionHasErrors('email');
+    }
+
+    public function test_admin_can_create_and_duplicate_email_template(): void
+    {
+        $response = $this->actingAs($this->admin)->post(route('email-marketing.templates.store'), [
+            'name' => 'Template Promo',
+            'subject' => 'Penawaran Spesial {{company}}',
+            'body' => 'Halo {{name}}, kami memiliki promo khusus untuk {{company}}.',
+        ]);
+
+        $response->assertRedirect(route('email-marketing.templates.index'));
+        $template = EmailTemplate::where('name', 'Template Promo')->first();
+        $this->assertNotNull($template);
+
+        // Duplicate template
+        $dupResponse = $this->actingAs($this->admin)->post(route('email-marketing.templates.duplicate', $template));
+        $dupResponse->assertRedirect(route('email-marketing.templates.index'));
+
+        $this->assertDatabaseHas('email_templates', [
+            'name' => 'Template Promo (Salinan)',
+        ]);
+    }
+
+    public function test_campaign_creates_recipients_and_dispatches_jobs(): void
+    {
+        Queue::fake();
+
+        $contact1 = EmailContact::create([
+            'name' => 'Alice',
+            'email' => 'alice@example.com',
+            'is_subscribed' => true,
+        ]);
+
+        $contact2 = EmailContact::create([
+            'name' => 'Bob',
+            'email' => 'bob@example.com',
+            'is_subscribed' => true,
+        ]);
+
+        $unsubscribedContact = EmailContact::create([
+            'name' => 'Charlie',
+            'email' => 'charlie@example.com',
+            'is_subscribed' => false,
+        ]);
+
+        $template = EmailTemplate::create([
+            'name' => 'General Notice',
+            'subject' => 'Important Notice',
+            'body' => 'Hello {{name}}',
+            'created_by' => $this->admin->id,
+        ]);
+
+        $response = $this->actingAs($this->admin)->post(route('email-marketing.campaigns.store'), [
+            'name' => 'Test Campaign 1',
+            'subject' => 'Important Notice for {{name}}',
+            'template_id' => $template->id,
+            'recipient_type' => 'all_subscribed',
+        ]);
+
+        $campaign = EmailCampaign::where('name', 'Test Campaign 1')->first();
+        $this->assertNotNull($campaign);
+        $this->assertEquals(2, $campaign->total_recipients); // only 2 subscribed
+
+        $response->assertRedirect(route('email-marketing.campaigns.show', $campaign));
+
+        // Ensure SendCampaignEmail job was pushed for both recipients
+        Queue::assertPushed(SendCampaignEmail::class, 2);
+    }
+
+    public function test_job_sends_email_individually_and_replaces_variables(): void
+    {
+        Mail::fake();
+
+        $contact = EmailContact::create([
+            'name' => 'Diana Prince',
+            'email' => 'diana@example.com',
+            'company' => 'Themyscira Corp',
+            'is_subscribed' => true,
+        ]);
+
+        $template = EmailTemplate::create([
+            'name' => 'Exclusive Promo',
+            'subject' => 'Special for {{company}}',
+            'body' => '<p>Halo {{name}} dari {{company}} ({{email}}), silakan unsubscribe di <a href="{{unsubscribe_url}}">sini</a>.</p>',
+            'created_by' => $this->admin->id,
+        ]);
+
+        $campaign = EmailCampaign::create([
+            'name' => 'Exclusive Campaign',
+            'subject' => 'Special for {{company}}',
+            'template_id' => $template->id,
+            'status' => 'queued',
+            'total_recipients' => 1,
+            'sent_count' => 0,
+            'failed_count' => 0,
+            'created_by' => $this->admin->id,
+        ]);
+
+        $recipient = EmailCampaignRecipient::create([
+            'campaign_id' => $campaign->id,
+            'contact_id' => $contact->id,
+            'email' => $contact->email,
+            'status' => 'pending',
+            'attempts' => 0,
+        ]);
+
+        // Execute Job synchronously
+        $job = new SendCampaignEmail($recipient->id);
+        $job->handle();
+
+        // Verify email was sent to Diana individually
+        Mail::assertSent(BroadcastMail::class, function ($mail) {
+            return $mail->hasTo('diana@example.com') &&
+                   $mail->emailSubject === 'Special for Themyscira Corp' &&
+                   str_contains($mail->emailBody, 'Halo Diana Prince') &&
+                   str_contains($mail->emailBody, 'Themyscira Corp');
+        });
+
+        // Verify recipient status updated to sent
+        $recipient->refresh();
+        $this->assertEquals('sent', $recipient->status);
+        $this->assertNotNull($recipient->sent_at);
+
+        // Verify Campaign stats updated
+        $campaign->refresh();
+        $this->assertEquals(1, $campaign->sent_count);
+        $this->assertEquals('completed', $campaign->status);
+
+        // Verify EmailLog created
+        $this->assertDatabaseHas('email_logs', [
+            'campaign_id' => $campaign->id,
+            'recipient_email' => 'diana@example.com',
+            'status' => 'sent',
+        ]);
+    }
+
+    public function test_unsubscribe_link_sets_is_subscribed_to_false(): void
+    {
+        $contact = EmailContact::create([
+            'name' => 'Eva Green',
+            'email' => 'eva@example.com',
+            'is_subscribed' => true,
+        ]);
+
+        $this->assertTrue($contact->is_subscribed);
+        $this->assertNotEmpty($contact->unsubscribe_token);
+
+        // Visit public unsubscribe URL
+        $response = $this->get(route('email-marketing.unsubscribe', ['token' => $contact->unsubscribe_token]));
+        $response->assertStatus(200);
+        $response->assertSee('Berhasil Berhenti Berlangganan');
+
+        $contact->refresh();
+        $this->assertFalse($contact->is_subscribed);
+    }
+}
