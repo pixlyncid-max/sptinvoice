@@ -40,6 +40,11 @@ class User extends Authenticatable
         return $this->role === 'karyawan';
     }
 
+    public function isMarketing()
+    {
+        return $this->role === 'marketing';
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

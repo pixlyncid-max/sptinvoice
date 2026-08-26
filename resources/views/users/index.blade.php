@@ -65,6 +65,10 @@
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                 Superadmin
                             </span>
+                        @elseif($user->role === 'marketing')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+                                Marketing
+                            </span>
                         @elseif($user->role === 'karyawan')
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                                 Karyawan

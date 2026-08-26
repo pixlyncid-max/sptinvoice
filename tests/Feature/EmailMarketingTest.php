@@ -266,4 +266,58 @@ class EmailMarketingTest extends TestCase
         $this->assertNotNull($campaign->attachment_path);
         \Illuminate\Support\Facades\Storage::disk('local')->assertExists($campaign->attachment_path);
     }
+
+    public function test_marketing_user_can_access_email_marketing_and_is_redirected_from_dashboard(): void
+    {
+        $marketing = User::factory()->create([
+            'role' => 'marketing',
+        ]);
+
+        // Dashboard redirects to email marketing contacts
+        $dashResponse = $this->actingAs($marketing)->get(route('dashboard'));
+        $dashResponse->assertRedirect(route('email-marketing.contacts.index'));
+
+        // Accessing contacts index succeeds
+        $contactsResponse = $this->actingAs($marketing)->get(route('email-marketing.contacts.index'));
+        $contactsResponse->assertStatus(200);
+
+        // Accessing templates index succeeds
+        $templatesResponse = $this->actingAs($marketing)->get(route('email-marketing.templates.index'));
+        $templatesResponse->assertStatus(200);
+
+        // Accessing campaigns index succeeds
+        $campaignsResponse = $this->actingAs($marketing)->get(route('email-marketing.campaigns.index'));
+        $campaignsResponse->assertStatus(200);
+
+        // Accessing logs index succeeds
+        $logsResponse = $this->actingAs($marketing)->get(route('email-marketing.logs.index'));
+        $logsResponse->assertStatus(200);
+    }
+
+    public function test_marketing_user_cannot_access_non_email_marketing_routes(): void
+    {
+        $marketing = User::factory()->create([
+            'role' => 'marketing',
+        ]);
+
+        // Invoices is blocked
+        $invoiceResponse = $this->actingAs($marketing)->get(route('invoices.index'));
+        $invoiceResponse->assertRedirect(route('email-marketing.contacts.index'));
+
+        // Clients is blocked
+        $clientResponse = $this->actingAs($marketing)->get(route('clients.index'));
+        $clientResponse->assertRedirect(route('email-marketing.contacts.index'));
+
+        // Salary is blocked
+        $salaryResponse = $this->actingAs($marketing)->get(route('salary.index'));
+        $salaryResponse->assertRedirect(route('email-marketing.contacts.index'));
+
+        // Attendance is blocked
+        $attendanceResponse = $this->actingAs($marketing)->get(route('attendance.index'));
+        $attendanceResponse->assertRedirect(route('email-marketing.contacts.index'));
+
+        // Users is blocked
+        $usersResponse = $this->actingAs($marketing)->get(route('users.index'));
+        $usersResponse->assertRedirect(route('email-marketing.contacts.index'));
+    }
 }

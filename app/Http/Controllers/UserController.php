@@ -46,7 +46,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string', 'in:admin,superadmin,karyawan'],
+            'role' => ['required', 'string', 'in:admin,superadmin,karyawan,marketing'],
         ]);
 
         User::create([
@@ -76,7 +76,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$user->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string', 'in:admin,superadmin,karyawan'],
+            'role' => ['required', 'string', 'in:admin,superadmin,karyawan,marketing'],
         ]);
 
         $user->name = $request->name;

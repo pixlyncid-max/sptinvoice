@@ -35,7 +35,48 @@
 
         <!-- Links -->
         <div class="flex-1 px-3">
-            @if(Auth::user()->isKaryawan())
+            @if(Auth::user()->isMarketing())
+            <!-- Navigation khusus Marketing -->
+            <nav class="space-y-1">
+                <div class="pb-2">
+                    <p class="text-[10px] uppercase text-white/30 font-semibold tracking-widest px-4 mb-2">EMAIL MARKETING</p>
+                </div>
+
+                <!-- Contacts -->
+                <a href="{{ route('email-marketing.contacts.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.contacts.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span class="ml-3">Contacts</span>
+                </a>
+
+                <!-- Templates -->
+                <a href="{{ route('email-marketing.templates.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.templates.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                    <span class="ml-3">Templates</span>
+                </a>
+
+                <!-- Campaigns -->
+                <a href="{{ route('email-marketing.campaigns.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.campaigns.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <span class="ml-3">Campaigns</span>
+                </a>
+
+                <!-- Email Logs -->
+                <a href="{{ route('email-marketing.logs.index') }}" class="sidebar-nav-item {{ request()->routeIs('email-marketing.logs.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span class="ml-3">Email Logs</span>
+                </a>
+            </nav>
+
+            <div class="mt-8">
+                <p class="text-[10px] uppercase text-white/30 font-semibold tracking-widest px-4 mb-3">Settings</p>
+                <nav class="space-y-1">
+                    <a href="{{ route('profile.edit') }}" class="sidebar-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+                        <span class="ml-3">Settings</span>
+                    </a>
+                </nav>
+            </div>
+            @elseif(Auth::user()->isKaryawan())
             <!-- Navigation khusus Karyawan -->
             <nav class="space-y-1">
                 <div class="pb-2">

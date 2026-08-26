@@ -11,6 +11,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (auth()->user() && auth()->user()->isMarketing()) {
+            return redirect()->route('email-marketing.contacts.index');
+        }
+
         // Allow all authenticated users (including Karyawan) to access Dashboard
 
         $totalClients = Client::count();

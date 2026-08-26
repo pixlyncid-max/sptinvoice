@@ -36,6 +36,7 @@
                     <select name="role" id="role" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-slate-300 rounded-md py-2 px-3 border @error('role') border-red-500 @enderror" required>
                         <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin (Akses Penuh)</option>
                         <option value="karyawan" {{ old('role') == 'karyawan' ? 'selected' : '' }}>Karyawan (Akses GAA, Invoice, Penawaran, Rate Card)</option>
+                        <option value="marketing" {{ old('role') == 'marketing' ? 'selected' : '' }}>Marketing (Khusus Email Marketing Saja)</option>
                         <option value="superadmin" {{ old('role') == 'superadmin' ? 'selected' : '' }}>Superadmin (Akses Pengaturan & Master Data)</option>
                     </select>
                     @error('role')
