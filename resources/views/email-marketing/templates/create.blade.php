@@ -31,7 +31,7 @@
 
             <div>
                 <label for="subject" class="block text-sm font-medium text-slate-700 mb-1">Subject Default (Opsional)</label>
-                <input type="text" name="subject" id="subject" value="{{ old('subject') }}" class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Update Layanan untuk {{company}}">
+                <input type="text" name="subject" id="subject" value="{{ old('subject') }}" class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Update Layanan untuk @{{company}}">
                 <p class="text-xs text-slate-500 mt-1">Dapat diubah kembali saat membuat Campaign.</p>
                 @error('subject') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
@@ -43,17 +43,17 @@
                     <!-- Variable Insert Buttons -->
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span class="text-xs text-slate-500 font-medium mr-1">Klik untuk sisipkan:</span>
-                        <button type="button" @click="insertTag('{{name}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Nama Kontak">
-                            @verbatim{{name}}@endverbatim
+                        <button type="button" @click="insertTag('@{{name}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Nama Kontak">
+                            @{{name}}
                         </button>
-                        <button type="button" @click="insertTag('{{company}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Nama Perusahaan">
-                            @verbatim{{company}}@endverbatim
+                        <button type="button" @click="insertTag('@{{company}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Nama Perusahaan">
+                            @{{company}}
                         </button>
-                        <button type="button" @click="insertTag('{{email}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Alamat Email">
-                            @verbatim{{email}}@endverbatim
+                        <button type="button" @click="insertTag('@{{email}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Alamat Email">
+                            @{{email}}
                         </button>
-                        <button type="button" @click="insertTag('{{unsubscribe_url}}')" class="px-2 py-0.5 text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-mono rounded border border-amber-300 transition" title="Link Unsubscribe">
-                            @verbatim{{unsubscribe_url}}@endverbatim
+                        <button type="button" @click="insertTag('@{{unsubscribe_url}}')" class="px-2 py-0.5 text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-mono rounded border border-amber-300 transition" title="Link Unsubscribe">
+                            @{{unsubscribe_url}}
                         </button>
                     </div>
                 </div>
@@ -65,9 +65,9 @@
             <div class="p-4 bg-slate-50 rounded-md border border-slate-200 text-xs text-slate-600 space-y-1">
                 <p class="font-semibold text-slate-700">Panduan Template:</p>
                 <ul class="list-disc list-inside space-y-0.5 pl-1">
-                    <li>Gunakan <code>@verbatim{{name}}@endverbatim</code> untuk menyapa penerima dengan nama mereka.</li>
-                    <li>Gunakan <code>@verbatim{{company}}@endverbatim</code> untuk menampilkan nama perusahaan penerima.</li>
-                    <li>Gunakan <code>@verbatim{{unsubscribe_url}}@endverbatim</code> pada tag <code>&lt;a href="@verbatim{{unsubscribe_url}}@endverbatim"&gt;Unsubscribe&lt;/a&gt;</code> untuk kepatuhan anti-spam.</li>
+                    <li>Gunakan <code>@{{name}}</code> untuk menyapa penerima dengan nama mereka.</li>
+                    <li>Gunakan <code>@{{company}}</code> untuk menampilkan nama perusahaan penerima.</li>
+                    <li>Gunakan <code>@{{unsubscribe_url}}</code> pada tag <code>&lt;a href="@{{unsubscribe_url}}"&gt;Unsubscribe&lt;/a&gt;</code> untuk kepatuhan anti-spam.</li>
                     <li>Mendukung format HTML sederhana seperti <code>&lt;strong&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;br&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;ul&gt;</code>, dll.</li>
                 </ul>
             </div>

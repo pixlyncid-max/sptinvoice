@@ -138,8 +138,8 @@
 
                 <div class="mt-4">
                     <label for="subject" class="block text-sm font-medium text-slate-700 mb-1">Subject Email <span class="text-red-500">*</span></label>
-                    <input type="text" name="subject" id="subject" x-model="subject" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Penawaran Spesial untuk {{company}}">
-                    <p class="text-xs text-slate-400 mt-1">Mendukung tag @verbatim{{name}}@endverbatim dan @verbatim{{company}}@endverbatim.</p>
+                    <input type="text" name="subject" id="subject" x-model="subject" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Penawaran Spesial untuk @{{company}}">
+                    <p class="text-xs text-slate-400 mt-1">Mendukung tag @{{name}} dan @{{company}}.</p>
                     @error('subject') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>

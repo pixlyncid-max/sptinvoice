@@ -41,6 +41,31 @@ class EmailMarketingTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_admin_can_render_template_create_and_edit_views(): void
+    {
+        $response = $this->actingAs($this->admin)->get(route('email-marketing.templates.create'));
+        $response->assertStatus(200);
+        $response->assertSee('Buat Template Email');
+
+        $template = EmailTemplate::create([
+            'name' => 'Sample Template',
+            'subject' => 'Sample Subject',
+            'body' => 'Hello {{name}}',
+            'created_by' => $this->admin->id,
+        ]);
+
+        $editResponse = $this->actingAs($this->admin)->get(route('email-marketing.templates.edit', $template));
+        $editResponse->assertStatus(200);
+        $editResponse->assertSee('Edit Template Email');
+    }
+
+    public function test_admin_can_render_campaign_create_view(): void
+    {
+        $response = $this->actingAs($this->admin)->get(route('email-marketing.campaigns.create'));
+        $response->assertStatus(200);
+        $response->assertSee('Buat Campaign Email Baru');
+    }
+
     public function test_karyawan_cannot_access_email_marketing(): void
     {
         $response = $this->actingAs($this->karyawan)->get(route('email-marketing.contacts.index'));

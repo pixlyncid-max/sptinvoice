@@ -7,13 +7,16 @@
     bodyText: @js(old('body', $template->body)),
     insertTag(tag) {
         const textarea = document.getElementById('template_body');
+        if (!textarea) return;
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const text = textarea.value;
         this.bodyText = text.substring(0, start) + tag + text.substring(end);
         textarea.value = this.bodyText;
         textarea.focus();
-        textarea.setSelectionRange(start + tag.length, start + tag.length);
+        setTimeout(() => {
+            textarea.setSelectionRange(start + tag.length, start + tag.length);
+        }, 50);
     }
 }">
     <form action="{{ route('email-marketing.templates.update', $template) }}" method="POST">
@@ -29,28 +32,29 @@
 
             <div>
                 <label for="subject" class="block text-sm font-medium text-slate-700 mb-1">Subject Default (Opsional)</label>
-                <input type="text" name="subject" id="subject" value="{{ old('subject', $template->subject) }}" class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border">
+                <input type="text" name="subject" id="subject" value="{{ old('subject', $template->subject) }}" class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Update Layanan untuk @{{company}}">
+                <p class="text-xs text-slate-500 mt-1">Dapat diubah kembali saat membuat Campaign.</p>
                 @error('subject') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center justify-between mb-1.5 flex-wrap gap-2">
                     <label for="template_body" class="block text-sm font-medium text-slate-700">Isi Email (HTML / Teks) <span class="text-red-500">*</span></label>
                     
                     <!-- Variable Insert Buttons -->
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span class="text-xs text-slate-500 font-medium mr-1">Klik untuk sisipkan:</span>
-                        <button type="button" @click="insertTag('{{name}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition">
-                            @verbatim{{name}}@endverbatim
+                        <button type="button" @click="insertTag('@{{name}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Nama Kontak">
+                            @{{name}}
                         </button>
-                        <button type="button" @click="insertTag('{{company}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition">
-                            @verbatim{{company}}@endverbatim
+                        <button type="button" @click="insertTag('@{{company}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Nama Perusahaan">
+                            @{{company}}
                         </button>
-                        <button type="button" @click="insertTag('{{email}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition">
-                            @verbatim{{email}}@endverbatim
+                        <button type="button" @click="insertTag('@{{email}}')" class="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono rounded border border-slate-300 transition" title="Alamat Email">
+                            @{{email}}
                         </button>
-                        <button type="button" @click="insertTag('{{unsubscribe_url}}')" class="px-2 py-0.5 text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-mono rounded border border-amber-300 transition">
-                            @verbatim{{unsubscribe_url}}@endverbatim
+                        <button type="button" @click="insertTag('@{{unsubscribe_url}}')" class="px-2 py-0.5 text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-mono rounded border border-amber-300 transition" title="Link Unsubscribe">
+                            @{{unsubscribe_url}}
                         </button>
                     </div>
                 </div>
