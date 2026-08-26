@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-4xl bg-white shadow-sm rounded-lg border border-slate-200 p-6" x-data="{
-    bodyText: @js(old('body', "Halo {{name}},\n\nKami dari SPT Invoice ingin menyampaikan informasi kepada {{company}}.\n\nSalam,\nTim SPT Invoice\n\n---\nJika Anda tidak ingin menerima email ini lagi, silakan <a href=\"{{unsubscribe_url}}\">Unsubscribe di sini</a>.")),
+    bodyText: @js(old('body', $defaultBody ?? '')),
     insertTag(tag) {
         const textarea = document.getElementById('template_body');
         if (!textarea) return;
