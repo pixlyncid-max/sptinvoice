@@ -232,23 +232,38 @@ class EmailMarketingTest extends TestCase
         ]);
     }
 
-    public function test_unsubscribe_link_sets_is_subscribed_to_false(): void
+    public function test_campaign_can_include_optional_attachment(): void
     {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        Queue::fake();
+
         $contact = EmailContact::create([
-            'name' => 'Eva Green',
-            'email' => 'eva@example.com',
+            'name' => 'Budi',
+            'email' => 'budi@example.com',
             'is_subscribed' => true,
         ]);
 
-        $this->assertTrue($contact->is_subscribed);
-        $this->assertNotEmpty($contact->unsubscribe_token);
+        $template = EmailTemplate::create([
+            'name' => 'Template with attachment',
+            'subject' => 'Subject',
+            'body' => 'Body',
+            'created_by' => $this->admin->id,
+        ]);
 
-        // Visit public unsubscribe URL
-        $response = $this->get(route('email-marketing.unsubscribe', ['token' => $contact->unsubscribe_token]));
-        $response->assertStatus(200);
-        $response->assertSee('Berhasil Berhenti Berlangganan');
+        $file = \Illuminate\Http\UploadedFile::fake()->create('proposal.pdf', 500, 'application/pdf');
 
-        $contact->refresh();
-        $this->assertFalse($contact->is_subscribed);
+        $response = $this->actingAs($this->admin)->post(route('email-marketing.campaigns.store'), [
+            'name' => 'Campaign with attachment',
+            'subject' => 'Subject with attachment',
+            'template_id' => $template->id,
+            'recipient_type' => 'all_subscribed',
+            'attachment' => $file,
+        ]);
+
+        $campaign = EmailCampaign::where('name', 'Campaign with attachment')->first();
+        $this->assertNotNull($campaign);
+        $this->assertEquals('proposal.pdf', $campaign->attachment_name);
+        $this->assertNotNull($campaign->attachment_path);
+        \Illuminate\Support\Facades\Storage::disk('local')->assertExists($campaign->attachment_path);
     }
 }

@@ -91,8 +91,13 @@ class SendCampaignEmail implements ShouldQueue
             $renderedSubject = str_replace(array_keys($variables), array_values($variables), $subject);
             $renderedBody = str_replace(array_keys($variables), array_values($variables), $body);
 
-            // Send individual email
-            Mail::to($recipient->email)->send(new BroadcastMail($renderedSubject, $renderedBody));
+            // Send individual email with optional attachment
+            Mail::to($recipient->email)->send(new BroadcastMail(
+                $renderedSubject,
+                $renderedBody,
+                $campaign->attachment_path,
+                $campaign->attachment_name
+            ));
 
             // Mark as sent
             $recipient->update([

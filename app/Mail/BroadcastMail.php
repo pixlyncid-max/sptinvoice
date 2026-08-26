@@ -14,14 +14,18 @@ class BroadcastMail extends Mailable
 
     public string $emailSubject;
     public string $emailBody;
+    public ?string $attachmentPath;
+    public ?string $attachmentName;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(string $subject, string $body)
+    public function __construct(string $subject, string $body, ?string $attachmentPath = null, ?string $attachmentName = null)
     {
         $this->emailSubject = $subject;
         $this->emailBody = $body;
+        $this->attachmentPath = $attachmentPath;
+        $this->attachmentName = $attachmentName;
     }
 
     /**
@@ -54,6 +58,13 @@ class BroadcastMail extends Mailable
      */
     public function attachments(): array
     {
+        if ($this->attachmentPath && file_exists(storage_path('app/' . $this->attachmentPath))) {
+            return [
+                \Illuminate\Mail\Mailables\Attachment::fromPath(storage_path('app/' . $this->attachmentPath))
+                    ->as($this->attachmentName ?: basename($this->attachmentPath)),
+            ];
+        }
+
         return [];
     }
 }

@@ -60,6 +60,7 @@ class EmailCampaignController extends Controller
             'name' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
             'template_id' => 'required|exists:email_templates,id',
+            'attachment' => 'nullable|file|max:10240', // Max 10MB
             'recipient_type' => 'required|in:all_subscribed,custom',
             'selected_contacts' => 'nullable|array',
             'selected_contacts.*' => 'exists:email_contacts,id',
@@ -82,12 +83,22 @@ class EmailCampaignController extends Controller
             return back()->withErrors(['selected_contacts' => 'Tidak ada kontak aktif (subscribed) yang dipilih.'])->withInput();
         }
 
+        $attachmentPath = null;
+        $attachmentName = null;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $attachmentName = $file->getClientOriginalName();
+            $attachmentPath = $file->store('campaign_attachments');
+        }
+
         DB::beginTransaction();
         try {
             $campaign = EmailCampaign::create([
                 'name' => $request->name,
                 'subject' => $request->subject,
                 'template_id' => $request->template_id,
+                'attachment_path' => $attachmentPath,
+                'attachment_name' => $attachmentName,
                 'status' => 'queued',
                 'total_recipients' => $contacts->count(),
                 'sent_count' => 0,

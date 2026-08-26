@@ -12,6 +12,7 @@
     totalSubscribed: {{ $totalSubscribed }},
     templates: @js($templates->map(function($t) { return ['id' => (string)$t->id, 'name' => $t->name, 'subject' => $t->subject ?? '', 'body' => $t->body ?? '']; })),
     contactSearch: '',
+    attachmentFileName: '',
 
     previewModalOpen: false,
     confirmModalOpen: false,
@@ -107,7 +108,7 @@
     </div>
     @endif
 
-    <form id="campaignForm" action="{{ route('email-marketing.campaigns.store') }}" method="POST">
+    <form id="campaignForm" action="{{ route('email-marketing.campaigns.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="bg-white shadow-sm rounded-lg border border-slate-200 p-6 space-y-6">
@@ -120,7 +121,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Nama Campaign <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" x-model="campaignName" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Broadcast Promo Bulan Ini">
+                        <input type="text" name="name" id="name" x-model="campaignName" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Penawaran Konsultasi Perpajakan">
                         @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -141,6 +142,14 @@
                     <input type="text" name="subject" id="subject" x-model="subject" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2 px-3 border" placeholder="e.g. Penawaran Spesial untuk @{{company}}">
                     <p class="text-xs text-slate-400 mt-1">Mendukung tag @{{name}} dan @{{company}}.</p>
                     @error('subject') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Optional File Attachment -->
+                <div class="mt-4">
+                    <label for="attachment" class="block text-sm font-medium text-slate-700 mb-1">Lampiran Dokumen / File (Opsional)</label>
+                    <input type="file" name="attachment" id="attachment" @change="attachmentFileName = $event.target.files[0] ? $event.target.files[0].name : ''" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 border border-slate-300 rounded-md p-1">
+                    <p class="text-xs text-slate-400 mt-1">Mendukung format PDF, DOCX, XLSX, PNG, JPG (Maks. 10MB per file).</p>
+                    @error('attachment') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
 
@@ -230,15 +239,35 @@
 
             <div x-show="previewModalOpen" class="relative z-50 inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
                 <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-slate-800">Preview Tampilan Email</h3>
+                    <h3 class="text-sm font-bold text-slate-800">Preview Tampilan Broadcast Email</h3>
                     <button type="button" @click="previewModalOpen = false" class="text-slate-400 hover:text-slate-600">&times;</button>
                 </div>
-                <div class="p-6 bg-slate-50">
-                    <div class="bg-white p-3 rounded border border-slate-200 mb-3">
-                        <span class="text-xs text-slate-500 font-semibold block mb-0.5">Subject:</span>
+                <div class="p-6 bg-slate-100 space-y-3">
+                    <div class="bg-white p-3 rounded border border-slate-200">
+                        <span class="text-xs text-slate-500 font-semibold block mb-0.5">Subject Email:</span>
                         <div class="text-sm font-medium text-slate-900" x-text="previewSubject"></div>
                     </div>
-                    <div class="bg-white p-6 rounded border border-slate-200 min-h-[220px]" x-html="previewBody"></div>
+                    
+                    <!-- Email Container Preview -->
+                    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
+                        <div class="p-6 text-sm text-slate-700 leading-relaxed min-h-[180px]" x-html="previewBody"></div>
+                        
+                        <!-- Fixed Footer Preview -->
+                        <div class="border-t border-slate-100">
+                            <img src="{{ url('storage/footer-email-fix.png') }}" alt="Konsultan Borneo" class="w-full h-auto block" onerror="this.style.display='none'">
+                            <div class="bg-slate-900 text-white p-4 text-center text-xs">
+                                <p class="text-slate-400 text-[11px] font-semibold uppercase tracking-wider mb-2">Terhubung Dengan Kami:</p>
+                                <div class="flex items-center justify-center gap-1.5 flex-wrap">
+                                    <span class="px-2 py-1 bg-emerald-600 text-white rounded text-[10px] font-bold">WhatsApp</span>
+                                    <span class="px-2 py-1 bg-pink-600 text-white rounded text-[10px] font-bold">Instagram</span>
+                                    <span class="px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">Facebook</span>
+                                    <span class="px-2 py-1 bg-black text-white border border-slate-700 rounded text-[10px] font-bold">Threads</span>
+                                    <span class="px-2 py-1 bg-slate-800 text-white rounded text-[10px] font-bold">TikTok</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <p class="text-[11px] text-slate-400 mt-2">* Ditampilkan menggunakan data simulasi contoh penerima.</p>
                 </div>
                 <div class="bg-white px-5 py-3 border-t border-slate-200 text-right">
@@ -277,6 +306,12 @@
                             <span class="text-slate-500">Total Penerima:</span>
                             <span class="font-bold text-primary" x-text="recipientCount + ' Kontak'"></span>
                         </div>
+                        <template x-if="attachmentFileName">
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Lampiran:</span>
+                                <span class="font-semibold text-slate-800 truncate max-w-[200px]" x-text="attachmentFileName"></span>
+                            </div>
+                        </template>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Metode Pengiriman:</span>
                             <span class="text-slate-700">Individual via Laravel Queue</span>

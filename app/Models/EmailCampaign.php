@@ -13,6 +13,8 @@ class EmailCampaign extends Model
         'name',
         'subject',
         'template_id',
+        'attachment_path',
+        'attachment_name',
         'status',
         'total_recipients',
         'sent_count',
