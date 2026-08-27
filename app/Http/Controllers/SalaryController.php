@@ -71,18 +71,17 @@ class SalaryController extends Controller
         $lembur_weekend_hours = 0;
 
         foreach ($attendances as $a) {
-            if ($a->lembur_jam > 0) {
-                $jam = min($a->lembur_jam, 4); // Maks 4 jam
+            $jam = (float) $a->lembur_jam;
+            if ($jam > 0) {
                 if ($a->tanggal->isWeekend()) {
                     $lembur_calc += $jam * $s_ot_weekend;
                     $lembur_weekend_hours += $jam;
                 } else {
                     $lembur_weekday_hours += $jam;
-                    if ($jam >= 1) {
-                        $lembur_calc += $s_ot_weekday; // 1 jam pertama
-                        if ($jam > 1) {
-                            $lembur_calc += ($jam - 1) * $s_ot_weekday_extra; // jam ke 2-4
-                        }
+                    if ($jam <= 1) {
+                        $lembur_calc += $jam * $s_ot_weekday;
+                    } else {
+                        $lembur_calc += $s_ot_weekday + (($jam - 1) * $s_ot_weekday_extra);
                     }
                 }
             }

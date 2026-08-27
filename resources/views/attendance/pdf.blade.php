@@ -85,7 +85,7 @@
                     I:{{ $employee->attendances->where('status', 'ijin')->count() }}
                 </td>
                 <td class="lembur-col">
-                    {{ $employee->attendances->sum('lembur_jam') }}j
+                    {{ (float) $employee->attendances->sum('lembur_jam') }}j
                 </td>
             </tr>
             @endforeach

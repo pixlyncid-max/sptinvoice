@@ -91,7 +91,7 @@
                                 $status = 'sakit_surat';
                             }
                         @endphp
-                        <td class="px-0 py-0 border-r text-center {{ $isWeekend ? 'bg-red-50/30' : '' }} relative align-top" x-data="{ status: '{{ $status }}', lembur: '{{ $lembur_jam > 0 ? $lembur_jam : '' }}' }">
+                        <td class="px-0 py-0 border-r text-center {{ $isWeekend ? 'bg-red-50/30' : '' }} relative align-top" x-data="{ status: '{{ $status }}', lembur: '{{ $lembur_jam > 0 ? (float) $lembur_jam : '' }}' }">
                             <div class="flex flex-col items-center h-full">
                                 <!-- Top part: Status -->
                                 <div class="w-full h-[30px] flex items-center justify-center relative border-b border-slate-100">
@@ -133,7 +133,7 @@
                                 
                                 <!-- Bottom part: Lembur -->
                                 <div class="w-full h-5 flex items-center justify-center bg-slate-50/50 relative">
-                                    <input type="number" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" x-model="lembur" min="0" max="4" class="absolute inset-0 w-full h-full opacity-0 cursor-text z-10" placeholder="L">
+                                    <input type="number" step="0.01" min="0" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" x-model="lembur" class="absolute inset-0 w-full h-full opacity-0 cursor-text z-10" placeholder="L">
                                     <div class="pointer-events-none text-[9px] font-bold" :class="lembur ? 'text-[#1e293b]' : 'text-slate-300'">
                                         <span x-text="lembur ? lembur + 'h' : 'L'"></span>
                                     </div>
@@ -147,7 +147,7 @@
                                     <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></span>
                                     <span class="font-bold text-slate-800">{{ $employee->attendances->where('status', 'hadir')->count() }}H</span>
                                     @if($employee->attendances->sum('lembur_jam') > 0)
-                                        <span class="font-bold text-[#1e293b] bg-slate-200/80 px-1 rounded ml-1">{{ $employee->attendances->sum('lembur_jam') }}H OT</span>
+                                        <span class="font-bold text-[#1e293b] bg-slate-200/80 px-1 rounded ml-1">{{ (float) $employee->attendances->sum('lembur_jam') }}H OT</span>
                                     @endif
                                 </div>
                                 @if($employee->attendances->whereIn('status', ['telat_1', 'telat_2'])->count() > 0)

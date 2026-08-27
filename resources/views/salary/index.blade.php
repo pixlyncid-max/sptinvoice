@@ -45,8 +45,8 @@
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-amber-600">{{ $stats['telat_1'] }}x</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-red-600">{{ $stats['telat_2'] }}x</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                        <div class="font-bold text-primary">{{ $stats['lembur_weekday_hours'] + $stats['lembur_weekend_hours'] }} jam</div>
-                        <div class="text-[10px] text-slate-400">WD: {{ $stats['lembur_weekday_hours'] }}j | WE: {{ $stats['lembur_weekend_hours'] }}j</div>
+                        <div class="font-bold text-primary">{{ (float) ($stats['lembur_weekday_hours'] + $stats['lembur_weekend_hours']) }} jam</div>
+                        <div class="text-[10px] text-slate-400">WD: {{ (float) $stats['lembur_weekday_hours'] }}j | WE: {{ (float) $stats['lembur_weekend_hours'] }}j</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-900" x-data="{ show: false }">
                         <div class="flex items-center justify-end gap-2">

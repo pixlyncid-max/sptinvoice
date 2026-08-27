@@ -69,7 +69,7 @@
                 I:{{ $employee->attendances->where('status', 'ijin')->count() }}
             </td>
             <td style="border: 1pt solid #000000; font-weight: bold; text-align: center; color: #e11d48; background-color: #ffeff2;">
-                {{ $employee->attendances->sum('lembur_jam') }}j
+                {{ (float) $employee->attendances->sum('lembur_jam') }}j
             </td>
         </tr>
         @endforeach
