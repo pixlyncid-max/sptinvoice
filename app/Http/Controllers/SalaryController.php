@@ -107,9 +107,9 @@ class SalaryController extends Controller
         $transport = $adjustment ? $adjustment->transport : 0;
         $bonus = $adjustment ? $adjustment->bonus : 0;
         
-        $bpjs_kesehatan = ($adjustment && $adjustment->bpjs_kesehatan > 0) ? $adjustment->bpjs_kesehatan : $bpjs_kes_auto;
-        $bpjs_tk = ($adjustment && $adjustment->bpjs_tk > 0) ? $adjustment->bpjs_tk : $bpjs_tk_auto;
-        $pph21 = ($adjustment && $adjustment->pph21 > 0) ? $adjustment->pph21 : $pph21_auto;
+        $bpjs_kesehatan = $bpjs_kes_auto;
+        $bpjs_tk = $bpjs_tk_auto;
+        $pph21 = $pph21_auto;
         
         $pinjaman = $adjustment ? $adjustment->pinjaman : 0;
         $lain_lain_manual = $adjustment ? $adjustment->lain_lain : 0;
@@ -168,9 +168,6 @@ class SalaryController extends Controller
             'lembur' => 'nullable|numeric',
             'transport' => 'nullable|numeric',
             'bonus' => 'nullable|numeric',
-            'bpjs_kesehatan' => 'nullable|numeric',
-            'bpjs_tk' => 'nullable|numeric',
-            'pph21' => 'nullable|numeric',
             'pinjaman' => 'nullable|numeric',
             'lain_lain' => 'nullable|numeric',
         ]);
@@ -181,9 +178,6 @@ class SalaryController extends Controller
             'lembur',
             'transport',
             'bonus',
-            'bpjs_kesehatan',
-            'bpjs_tk',
-            'pph21',
             'pinjaman',
             'lain_lain',
         ];
