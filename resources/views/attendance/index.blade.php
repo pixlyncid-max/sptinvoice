@@ -279,139 +279,115 @@
      aria-labelledby="lembur-modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
         <div x-show="isOpen" 
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+             class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" 
              @click="closeModal()"></div>
 
         <div x-show="isOpen" 
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="relative z-50 inline-block bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100">
+             class="relative z-50 inline-block bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200">
             
             <!-- Header -->
-            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-4 flex justify-between items-center text-white">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
-                        ⏱️
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold tracking-tight" id="lembur-modal-title">Input Jam Lembur</h3>
-                        <p class="text-xs text-slate-300" x-text="data.employeeName"></p>
-                    </div>
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 flex items-center gap-2" id="lembur-modal-title">
+                        <span>⏱️</span> Input Jam Lembur
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5" x-text="'Karyawan: ' + data.employeeName"></p>
                 </div>
-                <button type="button" @click="closeModal()" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-700/50">
+                <button type="button" @click="closeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-200/50 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
             <!-- Body -->
-            <div class="p-6 space-y-5">
+            <div class="p-6 space-y-4">
                 <!-- Info Date & Type -->
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5">
-                    <div class="flex items-center gap-2 text-xs font-medium text-slate-700">
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         <span x-text="data.formattedDate"></span>
                     </div>
-                    <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
-                          :class="data.isWeekend ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'"
+                    <span class="text-[11px] font-bold px-2.5 py-1 rounded-md"
+                          :class="data.isWeekend ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'"
                           x-text="data.isWeekend ? 'Weekend (Rp ' + formatRupiah(rates.weekend) + '/j)' : 'Weekday'"></span>
                 </div>
 
-                <!-- Input Selection: Mode Tabs -->
-                <div class="space-y-3">
-                    <div class="flex rounded-lg bg-slate-100 p-1 text-xs font-semibold">
-                        <button type="button" 
-                                @click="mode = 'duration'"
-                                :class="mode === 'duration' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
-                                class="flex-1 py-1.5 rounded-md transition text-center">
-                            Input Durasi (Jam & Menit)
-                        </button>
-                        <button type="button" 
-                                @click="mode = 'time_range'"
-                                :class="mode === 'time_range' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
-                                class="flex-1 py-1.5 rounded-md transition text-center">
-                            Hitung Rentang Jam (Mulai - Selesai)
-                        </button>
-                    </div>
+                <!-- Mode Selector -->
+                <div class="flex rounded-lg bg-slate-100 p-1 text-xs font-semibold">
+                    <button type="button" 
+                            @click="mode = 'duration'"
+                            :class="mode === 'duration' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
+                            class="flex-1 py-1.5 rounded-md transition text-center">
+                        Input Durasi (Jam & Menit)
+                    </button>
+                    <button type="button" 
+                            @click="mode = 'time_range'"
+                            :class="mode === 'time_range' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
+                            class="flex-1 py-1.5 rounded-md transition text-center">
+                        Hitung Rentang Jam (Mulai - Selesai)
+                    </button>
+                </div>
 
-                    <!-- Mode 1: Duration -->
-                    <div x-show="mode === 'duration'" class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Jam</label>
-                            <div class="relative">
-                                <input type="number" min="0" max="24" x-model.number="inputHours" @input="recalc()" 
-                                       placeholder="0"
-                                       class="w-full text-sm font-bold rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500 pr-10">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-medium pointer-events-none">Jam</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Menit</label>
-                            <div class="relative">
-                                <input type="number" min="0" max="59" x-model.number="inputMinutes" @input="recalc()" 
-                                       placeholder="0"
-                                       class="w-full text-sm font-bold rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500 pr-12">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-medium pointer-events-none">Menit</span>
-                            </div>
-                        </div>
+                <!-- Input Fields: Mode 1 (Duration) -->
+                <div x-show="mode === 'duration'" class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Jumlah Jam</label>
+                        <input type="number" min="0" max="24" x-model.number="inputHours" @input="recalc()" 
+                               placeholder="0"
+                               class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-800 bg-white font-medium focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
                     </div>
-
-                    <!-- Mode 2: Time Range -->
-                    <div x-show="mode === 'time_range'" class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jam Mulai Lembur</label>
-                            <input type="time" x-model="startTime" @input="calcFromTimeRange()" 
-                                   class="w-full text-sm rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jam Selesai Lembur</label>
-                            <input type="time" x-model="endTime" @input="calcFromTimeRange()" 
-                                   class="w-full text-sm rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500">
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Jumlah Menit</label>
+                        <input type="number" min="0" max="59" x-model.number="inputMinutes" @input="recalc()" 
+                               placeholder="0"
+                               class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-800 bg-white font-medium focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
                     </div>
                 </div>
 
-                <!-- Live Calculation & Estimation Box -->
-                <div class="bg-gradient-to-br from-amber-50/70 via-orange-50/40 to-slate-50 border border-amber-200/70 rounded-xl p-4 space-y-3">
-                    <div class="flex items-center justify-between border-b border-amber-200/50 pb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-base">⏱️</span>
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">Durasi Lembur</span>
-                        </div>
+                <!-- Input Fields: Mode 2 (Time Range) -->
+                <div x-show="mode === 'time_range'" class="grid grid-cols-2 gap-4 p-3.5 bg-slate-50 border border-slate-200 rounded-lg">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Jam Mulai Lembur</label>
+                        <input type="time" x-model="startTime" @input="calcFromTimeRange()" 
+                               class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-800 bg-white font-medium focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Jam Selesai Lembur</label>
+                        <input type="time" x-model="endTime" @input="calcFromTimeRange()" 
+                               class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-800 bg-white font-medium focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                    </div>
+                </div>
+
+                <!-- Calculation Preview Box -->
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                            <span>⏱️</span> Durasi Lembur
+                        </span>
                         <div class="text-right">
                             <span class="text-sm font-extrabold text-slate-900" x-text="durationText"></span>
                             <span class="text-xs text-slate-500 ml-1" x-text="'(± ' + decimalHours.toFixed(2) + ' jam)'"></span>
                         </div>
                     </div>
 
-                    <div class="space-y-1.5 text-xs">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-base">💰</span>
-                            <span class="font-bold text-slate-800 uppercase tracking-wider">Rincian Bayaran</span>
+                    <div class="space-y-2 text-xs">
+                        <div class="font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                            <span>💰</span> Rincian Bayaran
                         </div>
 
-                        <!-- Calculation breakdown template -->
+                        <!-- Belum ada durasi -->
                         <template x-if="totalMinutes <= 0">
-                            <p class="text-slate-400 italic">Masukkan durasi jam atau menit lembur di atas.</p>
+                            <p class="text-slate-400 italic pl-1">Masukkan durasi jam atau menit lembur di atas.</p>
                         </template>
 
+                        <!-- Weekday calculation -->
                         <template x-if="totalMinutes > 0 && !data.isWeekend">
-                            <div class="space-y-1 text-slate-700 pl-2">
+                            <div class="space-y-1 text-slate-700 pl-1">
                                 <template x-if="totalMinutes <= 60">
                                     <div class="space-y-0.5">
                                         <p class="text-slate-500 text-[11px]">Karena belum mencapai 1 jam pertama (Rp <span x-text="formatRupiah(rates.weekday_first)"></span>/jam):</p>
                                         <p class="font-semibold text-slate-800">
                                             • <span x-text="totalMinutes"></span> menit × Rp <span x-text="formatRupiah(rates.weekday_first)"></span> ÷ 60 = 
-                                            <span class="font-bold text-emerald-700">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
+                                            <span class="font-bold text-emerald-600">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
                                         </p>
                                     </div>
                                 </template>
@@ -430,19 +406,20 @@
                             </div>
                         </template>
 
+                        <!-- Weekend calculation -->
                         <template x-if="totalMinutes > 0 && data.isWeekend">
-                            <div class="pl-2">
+                            <div class="pl-1">
                                 <p class="text-slate-500 text-[11px]">Tarif Akhir Pekan (Weekend Rp <span x-text="formatRupiah(rates.weekend)"></span>/jam):</p>
                                 <p class="font-semibold text-slate-800">
                                     • <span x-text="decimalHours.toFixed(2)"></span> jam × Rp <span x-text="formatRupiah(rates.weekend)"></span> = 
-                                    <span class="font-bold text-emerald-700">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
+                                    <span class="font-bold text-emerald-600">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
                                 </p>
                             </div>
                         </template>
 
-                        <!-- Total Bayaran Final -->
-                        <div x-show="totalMinutes > 0" class="pt-2 mt-2 border-t border-amber-200/50 flex justify-between items-center">
-                            <span class="font-bold text-slate-900">Total Bayaran Lembur:</span>
+                        <!-- Total Final -->
+                        <div x-show="totalMinutes > 0" class="pt-2.5 mt-2 border-t border-slate-200 flex justify-between items-center">
+                            <span class="font-bold text-slate-800 text-xs">Total Bayaran Lembur:</span>
                             <span class="text-base font-extrabold text-emerald-600">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
                         </div>
                     </div>
@@ -450,15 +427,15 @@
             </div>
 
             <!-- Footer Buttons -->
-            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200/80 flex items-center justify-between">
-                <button type="button" @click="clearLembur()" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-3 py-1.5 rounded-md hover:bg-rose-50 transition">
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between rounded-b-xl">
+                <button type="button" @click="clearLembur()" class="text-xs font-bold text-red-600 hover:text-red-800 px-3 py-1.5 rounded hover:bg-red-50 transition">
                     Hapus Lembur (0)
                 </button>
                 <div class="flex items-center gap-2">
-                    <button type="button" @click="closeModal()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition shadow-sm">
+                    <button type="button" @click="closeModal()" class="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition shadow-sm">
                         Batal
                     </button>
-                    <button type="button" @click="applyLembur()" class="px-5 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition">
+                    <button type="button" @click="applyLembur()" class="px-4 py-2 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-dark shadow-sm transition">
                         Terapkan Lembur
                     </button>
                 </div>
