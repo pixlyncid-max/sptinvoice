@@ -174,6 +174,23 @@ class SalaryController extends Controller
             'lain_lain' => 'nullable|numeric',
         ]);
 
+        $numericFields = [
+            'reimburse',
+            'uang_kehadiran',
+            'lembur',
+            'transport',
+            'bonus',
+            'bpjs_kesehatan',
+            'bpjs_tk',
+            'pph21',
+            'pinjaman',
+            'lain_lain',
+        ];
+
+        foreach ($numericFields as $field) {
+            $data[$field] = $data[$field] ?? 0;
+        }
+
         SalaryAdjustment::updateOrCreate(
             ['employee_id' => $data['employee_id'], 'month' => $data['month'], 'year' => $data['year']],
             $data

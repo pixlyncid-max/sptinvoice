@@ -153,7 +153,13 @@ function openAdjustmentModal(employee, adjustment) {
     const fields = ['reimburse', 'uang_kehadiran', 'transport', 'bonus', 'pph21', 'pinjaman', 'lain_lain'];
     fields.forEach(field => {
         const el = document.getElementById('adj_' + field);
-        if (el) el.value = adjustment ? adjustment[field] : '';
+        if (el) {
+            if (adjustment && adjustment[field] !== null && adjustment[field] !== undefined) {
+                el.value = Math.round(adjustment[field]);
+            } else {
+                el.value = 0;
+            }
+        }
     });
 
     document.getElementById('adjustmentModal').classList.remove('hidden');
