@@ -140,10 +140,17 @@
                                          formattedDate: '{{ $carbonDate->translatedFormat('l, d F Y') }}',
                                          isWeekend: {{ $isWeekend ? 'true' : 'false' }},
                                          currentHours: lembur,
-                                         onSave: (val) => { lembur = val; }
+                                         onSave: (val) => { 
+                                             lembur = val; 
+                                             if ($refs.lemburInput) { $refs.lemburInput.value = val; }
+                                         }
                                      })"
                                      title="Klik untuk input/hitung jam lembur">
-                                    <input type="hidden" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" :value="lembur">
+                                    <input type="hidden" 
+                                           x-ref="lemburInput"
+                                           name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" 
+                                           :value="lembur"
+                                           value="{{ $lembur_jam > 0 ? (float) $lembur_jam : '' }}">
                                     <div class="pointer-events-none text-[9px] font-bold" :class="lembur && lembur > 0 ? 'text-amber-700 font-extrabold bg-amber-100/80 px-1 rounded' : 'text-slate-300 group-hover:text-amber-600'">
                                         <span x-text="formatLemburBadge(lembur)"></span>
                                     </div>
@@ -465,7 +472,7 @@
         if (!val || val === '' || val === '0' || val === 0) return 'L';
         const num = parseFloat(val);
         if (!num || num <= 0) return 'L';
-        const h = Math.floor(num);
+        const h = Math.floor(num + 0.0001);
         const m = Math.round((num - h) * 60);
         if (h > 0 && m > 0) return `${h}j ${m}m`;
         if (h > 0) return `${h}j`;
@@ -503,8 +510,10 @@
                 this.data = detail;
                 const current = parseFloat(detail.currentHours) || 0;
                 if (current > 0) {
-                    this.inputHours = Math.floor(current);
-                    this.inputMinutes = Math.round((current - this.inputHours) * 60);
+                    const h = Math.floor(current + 0.0001);
+                    const m = Math.round((current - h) * 60);
+                    this.inputHours = h;
+                    this.inputMinutes = m;
                 } else {
                     this.inputHours = 0;
                     this.inputMinutes = 0;
@@ -575,7 +584,7 @@
             applyLembur() {
                 let decimalVal = '';
                 if (this.totalMinutes > 0) {
-                    decimalVal = (Math.round((this.totalMinutes / 60) * 100) / 100).toString();
+                    decimalVal = (Math.round((this.totalMinutes / 60) * 10000) / 10000).toString();
                 }
                 if (typeof this.data.onSave === 'function') {
                     this.data.onSave(decimalVal);
