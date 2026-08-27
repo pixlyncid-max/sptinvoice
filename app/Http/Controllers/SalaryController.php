@@ -11,13 +11,22 @@ use App\Models\SalaryAdjustment;
 
 class SalaryController extends Controller
 {
+    private function getAttendancePeriod($month, $year)
+    {
+        $startDate = Carbon::createFromDate($year, $month, 28)->subMonth()->format('Y-m-d');
+        $endDate = Carbon::createFromDate($year, $month, 27)->format('Y-m-d');
+        return [$startDate, $endDate];
+    }
+
     public function index(Request $request)
     {
         $month = $request->get('month', date('m'));
         $year = $request->get('year', date('Y'));
         
-        $employees = Employee::with(['attendances' => function($query) use ($month, $year) {
-            $query->whereMonth('tanggal', $month)->whereYear('tanggal', $year);
+        list($startDate, $endDate) = $this->getAttendancePeriod($month, $year);
+
+        $employees = Employee::with(['attendances' => function($query) use ($startDate, $endDate) {
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
         }, 'salaryAdjustments' => function($query) use ($month, $year) {
             $query->where('month', $month)->where('year', $year);
         }])->orderBy('id', 'asc')->get();
@@ -199,8 +208,10 @@ class SalaryController extends Controller
         $month = $request->get('month', date('m'));
         $year = $request->get('year', date('Y'));
         
-        $employee->load(['attendances' => function($query) use ($month, $year) {
-            $query->whereMonth('tanggal', $month)->whereYear('tanggal', $year);
+        list($startDate, $endDate) = $this->getAttendancePeriod($month, $year);
+
+        $employee->load(['attendances' => function($query) use ($startDate, $endDate) {
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
         }, 'salaryAdjustments' => function($query) use ($month, $year) {
             $query->where('month', $month)->where('year', $year);
         }]);
