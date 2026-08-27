@@ -68,7 +68,7 @@ class AttendanceController extends Controller
             foreach ($dates as $dateStr => $attr) {
                 $tanggal = Carbon::parse($dateStr);
                 $status = is_array($attr) ? ($attr['status'] ?? null) : $attr;
-                $lembur = is_array($attr) ? ($attr['lembur'] ?? 0) : 0;
+                $lembur = is_array($attr) ? (float) ($attr['lembur'] ?? 0) : (float) ($attr ?? 0);
                 $surat = 0;
                 
                 if ($status === 'sakit_surat') {

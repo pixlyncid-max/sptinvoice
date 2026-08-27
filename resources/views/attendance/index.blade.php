@@ -145,7 +145,7 @@
                                      title="Klik untuk input/hitung jam lembur">
                                     <input type="hidden" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" :value="lembur">
                                     <div class="pointer-events-none text-[9px] font-bold" :class="lembur && lembur > 0 ? 'text-amber-700 font-extrabold bg-amber-100/80 px-1 rounded' : 'text-slate-300 group-hover:text-amber-600'">
-                                        <span x-text="lembur && lembur > 0 ? lembur + 'h' : 'L'"></span>
+                                        <span x-text="formatLemburBadge(lembur)"></span>
                                     </div>
                                 </div>
                             </div>
@@ -461,6 +461,17 @@
         });
     }
 
+    function formatLemburBadge(val) {
+        if (!val || val === '' || val === '0' || val === 0) return 'L';
+        const num = parseFloat(val);
+        if (!num || num <= 0) return 'L';
+        const h = Math.floor(num);
+        const m = Math.round((num - h) * 60);
+        if (h > 0 && m > 0) return `${h}j ${m}m`;
+        if (h > 0) return `${h}j`;
+        return `${m}m`;
+    }
+
     function overtimeModal() {
         return {
             isOpen: false,
@@ -562,9 +573,12 @@
             },
 
             applyLembur() {
-                const decimalVal = this.decimalHours > 0 ? (Math.round(this.decimalHours * 100) / 100) : '';
+                let decimalVal = '';
+                if (this.totalMinutes > 0) {
+                    decimalVal = (Math.round((this.totalMinutes / 60) * 100) / 100).toString();
+                }
                 if (typeof this.data.onSave === 'function') {
-                    this.data.onSave(decimalVal ? decimalVal.toString() : '');
+                    this.data.onSave(decimalVal);
                 }
                 this.closeModal();
             },

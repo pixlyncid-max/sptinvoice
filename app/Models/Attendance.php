@@ -10,6 +10,8 @@ class Attendance extends Model
 
     protected $casts = [
         'tanggal' => 'date',
+        'lembur_jam' => 'float',
+        'sakit_dengan_surat' => 'boolean',
     ];
 
     public function employee()
