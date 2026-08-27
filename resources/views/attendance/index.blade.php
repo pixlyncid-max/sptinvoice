@@ -132,10 +132,20 @@
                                 </div>
                                 
                                 <!-- Bottom part: Lembur -->
-                                <div class="w-full h-5 flex items-center justify-center bg-slate-50/50 relative">
-                                    <input type="number" step="0.01" min="0" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" x-model="lembur" class="absolute inset-0 w-full h-full opacity-0 cursor-text z-10" placeholder="L">
-                                    <div class="pointer-events-none text-[9px] font-bold" :class="lembur ? 'text-[#1e293b]' : 'text-slate-300'">
-                                        <span x-text="lembur ? lembur + 'h' : 'L'"></span>
+                                <div class="w-full h-5 flex items-center justify-center bg-slate-50/50 hover:bg-amber-100/70 transition-colors cursor-pointer relative group"
+                                     @click="$dispatch('open-lembur-modal', {
+                                         employeeId: {{ $employee->id }},
+                                         employeeName: '{{ addslashes($employee->nama) }}',
+                                         dateStr: '{{ $dateStr }}',
+                                         formattedDate: '{{ $carbonDate->translatedFormat('l, d F Y') }}',
+                                         isWeekend: {{ $isWeekend ? 'true' : 'false' }},
+                                         currentHours: lembur,
+                                         onSave: (val) => { lembur = val; }
+                                     })"
+                                     title="Klik untuk input/hitung jam lembur">
+                                    <input type="hidden" name="attendances[{{ $employee->id }}][{{ $dateStr }}][lembur]" :value="lembur">
+                                    <div class="pointer-events-none text-[9px] font-bold" :class="lembur && lembur > 0 ? 'text-amber-700 font-extrabold bg-amber-100/80 px-1 rounded' : 'text-slate-300 group-hover:text-amber-600'">
+                                        <span x-text="lembur && lembur > 0 ? lembur + 'h' : 'L'"></span>
                                     </div>
                                 </div>
                             </div>
@@ -258,6 +268,204 @@
         </div>
     </div>
 </div>
+<!-- Modal Input & Kalkulator Lembur Interaktif -->
+<div x-data="overtimeModal()"
+     x-on:open-lembur-modal.window="openModal($event.detail)"
+     x-on:keydown.escape.window="closeModal()"
+     x-show="isOpen"
+     x-cloak
+     style="display: none;"
+     class="fixed inset-0 z-50 overflow-y-auto"
+     aria-labelledby="lembur-modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        <div x-show="isOpen" 
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+             @click="closeModal()"></div>
+
+        <div x-show="isOpen" 
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="relative z-50 inline-block bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100">
+            
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-4 flex justify-between items-center text-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
+                        ⏱️
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold tracking-tight" id="lembur-modal-title">Input Jam Lembur</h3>
+                        <p class="text-xs text-slate-300" x-text="data.employeeName"></p>
+                    </div>
+                </div>
+                <button type="button" @click="closeModal()" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-700/50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-5">
+                <!-- Info Date & Type -->
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5">
+                    <div class="flex items-center gap-2 text-xs font-medium text-slate-700">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span x-text="data.formattedDate"></span>
+                    </div>
+                    <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
+                          :class="data.isWeekend ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'"
+                          x-text="data.isWeekend ? 'Weekend (Rp ' + formatRupiah(rates.weekend) + '/j)' : 'Weekday'"></span>
+                </div>
+
+                <!-- Input Selection: Mode Tabs -->
+                <div class="space-y-3">
+                    <div class="flex rounded-lg bg-slate-100 p-1 text-xs font-semibold">
+                        <button type="button" 
+                                @click="mode = 'duration'"
+                                :class="mode === 'duration' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
+                                class="flex-1 py-1.5 rounded-md transition text-center">
+                            Input Durasi (Jam & Menit)
+                        </button>
+                        <button type="button" 
+                                @click="mode = 'time_range'"
+                                :class="mode === 'time_range' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
+                                class="flex-1 py-1.5 rounded-md transition text-center">
+                            Hitung Rentang Jam (Mulai - Selesai)
+                        </button>
+                    </div>
+
+                    <!-- Mode 1: Duration -->
+                    <div x-show="mode === 'duration'" class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Jam</label>
+                            <div class="relative">
+                                <input type="number" min="0" max="24" x-model.number="inputHours" @input="recalc()" 
+                                       placeholder="0"
+                                       class="w-full text-sm font-bold rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500 pr-10">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-medium pointer-events-none">Jam</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Menit</label>
+                            <div class="relative">
+                                <input type="number" min="0" max="59" x-model.number="inputMinutes" @input="recalc()" 
+                                       placeholder="0"
+                                       class="w-full text-sm font-bold rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500 pr-12">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-medium pointer-events-none">Menit</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mode 2: Time Range -->
+                    <div x-show="mode === 'time_range'" class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jam Mulai Lembur</label>
+                            <input type="time" x-model="startTime" @input="calcFromTimeRange()" 
+                                   class="w-full text-sm rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jam Selesai Lembur</label>
+                            <input type="time" x-model="endTime" @input="calcFromTimeRange()" 
+                                   class="w-full text-sm rounded-lg border-slate-300 focus:ring-amber-500 focus:border-amber-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Calculation & Estimation Box -->
+                <div class="bg-gradient-to-br from-amber-50/70 via-orange-50/40 to-slate-50 border border-amber-200/70 rounded-xl p-4 space-y-3">
+                    <div class="flex items-center justify-between border-b border-amber-200/50 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">⏱️</span>
+                            <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">Durasi Lembur</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm font-extrabold text-slate-900" x-text="durationText"></span>
+                            <span class="text-xs text-slate-500 ml-1" x-text="'(± ' + decimalHours.toFixed(2) + ' jam)'"></span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 text-xs">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-base">💰</span>
+                            <span class="font-bold text-slate-800 uppercase tracking-wider">Rincian Bayaran</span>
+                        </div>
+
+                        <!-- Calculation breakdown template -->
+                        <template x-if="totalMinutes <= 0">
+                            <p class="text-slate-400 italic">Masukkan durasi jam atau menit lembur di atas.</p>
+                        </template>
+
+                        <template x-if="totalMinutes > 0 && !data.isWeekend">
+                            <div class="space-y-1 text-slate-700 pl-2">
+                                <template x-if="totalMinutes <= 60">
+                                    <div class="space-y-0.5">
+                                        <p class="text-slate-500 text-[11px]">Karena belum mencapai 1 jam pertama (Rp <span x-text="formatRupiah(rates.weekday_first)"></span>/jam):</p>
+                                        <p class="font-semibold text-slate-800">
+                                            • <span x-text="totalMinutes"></span> menit × Rp <span x-text="formatRupiah(rates.weekday_first)"></span> ÷ 60 = 
+                                            <span class="font-bold text-emerald-700">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
+                                        </p>
+                                    </div>
+                                </template>
+
+                                <template x-if="totalMinutes > 60">
+                                    <div class="space-y-0.5">
+                                        <p class="font-medium text-slate-800">
+                                            • 1 jam pertama = <span class="font-semibold">Rp <span x-text="formatRupiah(rates.weekday_first)"></span></span>
+                                        </p>
+                                        <p class="font-medium text-slate-800">
+                                            • <span x-text="totalMinutes - 60"></span> menit berikutnya (<span x-text="totalMinutes - 60"></span>/60 × Rp <span x-text="formatRupiah(rates.weekday_extra)"></span>) = 
+                                            <span class="font-semibold">Rp <span x-text="formatRupiah(calculatedPay - rates.weekday_first)"></span></span>
+                                        </p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template x-if="totalMinutes > 0 && data.isWeekend">
+                            <div class="pl-2">
+                                <p class="text-slate-500 text-[11px]">Tarif Akhir Pekan (Weekend Rp <span x-text="formatRupiah(rates.weekend)"></span>/jam):</p>
+                                <p class="font-semibold text-slate-800">
+                                    • <span x-text="decimalHours.toFixed(2)"></span> jam × Rp <span x-text="formatRupiah(rates.weekend)"></span> = 
+                                    <span class="font-bold text-emerald-700">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
+                                </p>
+                            </div>
+                        </template>
+
+                        <!-- Total Bayaran Final -->
+                        <div x-show="totalMinutes > 0" class="pt-2 mt-2 border-t border-amber-200/50 flex justify-between items-center">
+                            <span class="font-bold text-slate-900">Total Bayaran Lembur:</span>
+                            <span class="text-base font-extrabold text-emerald-600">Rp <span x-text="formatRupiah(calculatedPay)"></span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200/80 flex items-center justify-between">
+                <button type="button" @click="clearLembur()" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-3 py-1.5 rounded-md hover:bg-rose-50 transition">
+                    Hapus Lembur (0)
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="closeModal()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition shadow-sm">
+                        Batal
+                    </button>
+                    <button type="button" @click="applyLembur()" class="px-5 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition">
+                        Terapkan Lembur
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('styles')
@@ -274,6 +482,123 @@
         radios.forEach(radio => {
             radio.checked = true;
         });
+    }
+
+    function overtimeModal() {
+        return {
+            isOpen: false,
+            mode: 'duration',
+            rates: {
+                weekday_first: {{ $ot_rates['weekday_first'] ?? 30000 }},
+                weekday_extra: {{ $ot_rates['weekday_extra'] ?? 40000 }},
+                weekend: {{ $ot_rates['weekend'] ?? 50000 }},
+            },
+            data: {
+                employeeId: null,
+                employeeName: '',
+                dateStr: '',
+                formattedDate: '',
+                isWeekend: false,
+                currentHours: 0,
+                onSave: null,
+            },
+            inputHours: 0,
+            inputMinutes: 0,
+            startTime: '17:00',
+            endTime: '18:00',
+            totalMinutes: 0,
+            decimalHours: 0,
+            durationText: '0 Menit',
+            calculatedPay: 0,
+
+            openModal(detail) {
+                this.data = detail;
+                const current = parseFloat(detail.currentHours) || 0;
+                if (current > 0) {
+                    this.inputHours = Math.floor(current);
+                    this.inputMinutes = Math.round((current - this.inputHours) * 60);
+                } else {
+                    this.inputHours = 0;
+                    this.inputMinutes = 0;
+                }
+                this.mode = 'duration';
+                this.recalc();
+                this.isOpen = true;
+            },
+
+            closeModal() {
+                this.isOpen = false;
+            },
+
+            calcFromTimeRange() {
+                if (!this.startTime || !this.endTime) return;
+                const [sH, sM] = this.startTime.split(':').map(Number);
+                const [eH, eM] = this.endTime.split(':').map(Number);
+                
+                let startTotal = sH * 60 + sM;
+                let endTotal = eH * 60 + eM;
+                
+                if (endTotal < startTotal) {
+                    endTotal += 24 * 60;
+                }
+                
+                const diff = Math.max(0, endTotal - startTotal);
+                this.inputHours = Math.floor(diff / 60);
+                this.inputMinutes = diff % 60;
+                this.recalc();
+            },
+
+            recalc() {
+                const h = Math.max(0, parseInt(this.inputHours) || 0);
+                const m = Math.max(0, parseInt(this.inputMinutes) || 0);
+                this.totalMinutes = (h * 60) + m;
+                this.decimalHours = this.totalMinutes / 60;
+
+                if (h > 0 && m > 0) {
+                    this.durationText = `${h} Jam ${m} Menit`;
+                } else if (h > 0) {
+                    this.durationText = `${h} Jam`;
+                } else {
+                    this.durationText = `${m} Menit`;
+                }
+
+                if (this.totalMinutes <= 0) {
+                    this.calculatedPay = 0;
+                    return;
+                }
+
+                if (this.data.isWeekend) {
+                    this.calculatedPay = Math.round(this.decimalHours * this.rates.weekend);
+                } else {
+                    if (this.totalMinutes <= 60) {
+                        this.calculatedPay = Math.round((this.totalMinutes / 60) * this.rates.weekday_first);
+                    } else {
+                        const extraMinutes = this.totalMinutes - 60;
+                        const extraPay = (extraMinutes / 60) * this.rates.weekday_extra;
+                        this.calculatedPay = Math.round(this.rates.weekday_first + extraPay);
+                    }
+                }
+            },
+
+            formatRupiah(num) {
+                return new Intl.NumberFormat('id-ID').format(Math.round(num || 0));
+            },
+
+            applyLembur() {
+                const decimalVal = this.decimalHours > 0 ? (Math.round(this.decimalHours * 100) / 100) : '';
+                if (typeof this.data.onSave === 'function') {
+                    this.data.onSave(decimalVal ? decimalVal.toString() : '');
+                }
+                this.closeModal();
+            },
+
+            clearLembur() {
+                if (typeof this.data.onSave === 'function') {
+                    this.data.onSave('');
+                }
+                this.closeModal();
+            }
+        };
     }
 </script>
 @endpush

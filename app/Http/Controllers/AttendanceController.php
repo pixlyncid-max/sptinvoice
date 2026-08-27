@@ -35,7 +35,13 @@ class AttendanceController extends Controller
             $query->whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
         }])->orderBy('id', 'asc')->get();
 
-        return view('attendance.index', compact('employees', 'month', 'year', 'period'));
+        $ot_rates = [
+            'weekday_first' => (float) \App\Models\Setting::get('lembur_weekday_jam_pertama', 30000),
+            'weekday_extra' => (float) \App\Models\Setting::get('lembur_weekday_jam_berikutnya', 40000),
+            'weekend' => (float) \App\Models\Setting::get('lembur_weekend_per_jam', 50000),
+        ];
+
+        return view('attendance.index', compact('employees', 'month', 'year', 'period', 'ot_rates'));
     }
 
     public function store(Request $request)
