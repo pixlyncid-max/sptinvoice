@@ -65,7 +65,7 @@ class SalaryController extends Controller
         $s_sick_penalty = \App\Models\Setting::get('potongan_sakit', 50000);
         $s_sick_surat_penalty = \App\Models\Setting::get('potongan_sakit_surat', 0);
 
-        // Perhitungan Lembur Otomatis
+        // Perhitungan Lembur Otomatis Berbasis Menit Presisi
         $lembur_calc = 0;
         $lembur_weekday_hours = 0;
         $lembur_weekend_hours = 0;
@@ -73,19 +73,23 @@ class SalaryController extends Controller
         foreach ($attendances as $a) {
             $jam = (float) $a->lembur_jam;
             if ($jam > 0) {
+                $total_min = (int) round($jam * 60);
                 if ($a->tanggal->isWeekend()) {
-                    $lembur_calc += $jam * $s_ot_weekend;
+                    $lembur_calc += ($total_min / 60) * $s_ot_weekend;
                     $lembur_weekend_hours += $jam;
                 } else {
                     $lembur_weekday_hours += $jam;
-                    if ($jam <= 1) {
-                        $lembur_calc += $jam * $s_ot_weekday;
+                    if ($total_min <= 60) {
+                        $lembur_calc += ($total_min / 60) * $s_ot_weekday;
                     } else {
-                        $lembur_calc += $s_ot_weekday + (($jam - 1) * $s_ot_weekday_extra);
+                        $extra_min = $total_min - 60;
+                        $extra_pay = ($extra_min / 60) * $s_ot_weekday_extra;
+                        $lembur_calc += $s_ot_weekday + $extra_pay;
                     }
                 }
             }
         }
+        $lembur_calc = (float) round($lembur_calc);
 
         $gaji_pokok = $employee->gaji_pokok;
         $isMagang = $employee->jabatan === 'Staff Magang';

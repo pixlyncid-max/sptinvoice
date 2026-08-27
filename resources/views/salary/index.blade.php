@@ -45,8 +45,35 @@
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-amber-600">{{ $stats['telat_1'] }}x</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-red-600">{{ $stats['telat_2'] }}x</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                        <div class="font-bold text-primary">{{ (float) ($stats['lembur_weekday_hours'] + $stats['lembur_weekend_hours']) }} jam</div>
-                        <div class="text-[10px] text-slate-400">WD: {{ (float) $stats['lembur_weekday_hours'] }}j | WE: {{ (float) $stats['lembur_weekend_hours'] }}j</div>
+                        @php
+                            $totOtHours = $stats['lembur_weekday_hours'] + $stats['lembur_weekend_hours'];
+                            $totOtMin = (int) round($totOtHours * 60);
+                            $totH = intdiv($totOtMin, 60);
+                            $totM = $totOtMin % 60;
+                            
+                            $wdMin = (int) round($stats['lembur_weekday_hours'] * 60);
+                            $wdH = intdiv($wdMin, 60);
+                            $wdM = $wdMin % 60;
+                            
+                            $weMin = (int) round($stats['lembur_weekend_hours'] * 60);
+                            $weH = intdiv($weMin, 60);
+                            $weM = $weMin % 60;
+                        @endphp
+                        <div class="font-bold text-primary">
+                            @if($totH > 0 && $totM > 0)
+                                {{ $totH }} jam {{ $totM }} mnt
+                            @elseif($totH > 0)
+                                {{ $totH }} jam
+                            @elseif($totM > 0)
+                                {{ $totM }} menit
+                            @else
+                                0 jam
+                            @endif
+                        </div>
+                        <div class="text-[10px] text-slate-400">
+                            WD: {{ $wdH > 0 && $wdM > 0 ? "{$wdH}j {$wdM}m" : ($wdH > 0 ? "{$wdH}j" : ($wdM > 0 ? "{$wdM}m" : "0j")) }} | 
+                            WE: {{ $weH > 0 && $weM > 0 ? "{$weH}j {$weM}m" : ($weH > 0 ? "{$weH}j" : ($weM > 0 ? "{$weM}m" : "0j")) }}
+                        </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-900" x-data="{ show: false }">
                         <div class="flex items-center justify-end gap-2">
