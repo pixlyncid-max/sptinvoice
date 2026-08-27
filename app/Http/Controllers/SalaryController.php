@@ -83,12 +83,13 @@ class SalaryController extends Controller
         $isMagang = $employee->jabatan === 'Staff Magang';
 
         // Perhitungan Potongan BPJS (Otomatis)
-        $s_min_gaji = (float) \App\Models\Setting::get('batas_minimal_gaji_kena_pajak_bpjs', 3000000);
+        $s_min_gaji = (float) \App\Models\Setting::get('batas_minimal_gaji_kena_pajak_bpjs', 0);
         $gaji_pokok_val = (float) $gaji_pokok;
-        $eligibleForDeductions = !$isMagang && ($gaji_pokok_val >= $s_min_gaji);
+        $eligibleForDeductions = !$isMagang && ($s_min_gaji <= 0 || $gaji_pokok_val >= $s_min_gaji);
 
-        $bpjs_kesehatan = $eligibleForDeductions ? ($gaji_pokok_val * $s_bpjs_kes_pct) : 0;
-        $bpjs_tk = $eligibleForDeductions ? ($gaji_pokok_val * $s_bpjs_tk_pct) : 0;
+        $bpjs_kes_auto = $eligibleForDeductions ? ($gaji_pokok_val * $s_bpjs_kes_pct) : 0;
+        $bpjs_tk_auto = $eligibleForDeductions ? ($gaji_pokok_val * $s_bpjs_tk_pct) : 0;
+        $pph21_auto = $eligibleForDeductions ? ($gaji_pokok_val * $s_pph_pct) : 0;
 
         // Perhitungan Potongan Absensi
         $potongan_ijin = $attendances->where('status', 'ijin')->count() * $s_permit_penalty;
@@ -106,9 +107,9 @@ class SalaryController extends Controller
         $transport = $adjustment ? $adjustment->transport : 0;
         $bonus = $adjustment ? $adjustment->bonus : 0;
         
-        $pph21_manual = $adjustment ? $adjustment->pph21 : 0;
-        $pph21_auto = $eligibleForDeductions ? ($gaji_pokok * $s_pph_pct) : 0;
-        $pph21 = $pph21_manual ?: $pph21_auto; // Use manual if provided, else auto
+        $bpjs_kesehatan = ($adjustment && $adjustment->bpjs_kesehatan > 0) ? $adjustment->bpjs_kesehatan : $bpjs_kes_auto;
+        $bpjs_tk = ($adjustment && $adjustment->bpjs_tk > 0) ? $adjustment->bpjs_tk : $bpjs_tk_auto;
+        $pph21 = ($adjustment && $adjustment->pph21 > 0) ? $adjustment->pph21 : $pph21_auto;
         
         $pinjaman = $adjustment ? $adjustment->pinjaman : 0;
         $lain_lain_manual = $adjustment ? $adjustment->lain_lain : 0;

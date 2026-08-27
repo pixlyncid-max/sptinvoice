@@ -120,8 +120,16 @@
                         <h4 class="font-bold text-red-600 border-b pb-2 uppercase text-xs">Potongan Extra</h4>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">PPH 21</label>
-                            <input type="number" name="pph21" id="adj_pph21" class="w-full rounded-md border-slate-300 text-sm" placeholder="0">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">BPJS Kesehatan (Opsional / Manual)</label>
+                            <input type="number" name="bpjs_kesehatan" id="adj_bpjs_kesehatan" class="w-full rounded-md border-slate-300 text-sm" placeholder="0 (Otomatis dari Sistem)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">BPJS Ketenagakerjaan (Opsional / Manual)</label>
+                            <input type="number" name="bpjs_tk" id="adj_bpjs_tk" class="w-full rounded-md border-slate-300 text-sm" placeholder="0 (Otomatis dari Sistem)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">PPH 21 (Opsional / Manual)</label>
+                            <input type="number" name="pph21" id="adj_pph21" class="w-full rounded-md border-slate-300 text-sm" placeholder="0 (Otomatis dari Sistem)">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1">Pinjaman</label>
@@ -150,7 +158,7 @@ function openAdjustmentModal(employee, adjustment) {
     document.getElementById('adj_employee_id').value = employee.id;
     
     // Reset form
-    const fields = ['reimburse', 'uang_kehadiran', 'transport', 'bonus', 'pph21', 'pinjaman', 'lain_lain'];
+    const fields = ['reimburse', 'uang_kehadiran', 'transport', 'bonus', 'bpjs_kesehatan', 'bpjs_tk', 'pph21', 'pinjaman', 'lain_lain'];
     fields.forEach(field => {
         const el = document.getElementById('adj_' + field);
         if (el) {
