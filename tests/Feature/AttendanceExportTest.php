@@ -56,4 +56,66 @@ class AttendanceExportTest extends TestCase
         $response->assertSee('LAPORAN ABSENSI KARYAWAN');
         $response->assertSee('Jane Doe');
     }
+
+    public function test_admin_can_filter_attendance_by_search_query(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        Employee::create([
+            'nama' => 'Budi Santoso',
+            'jabatan' => 'Developer',
+            'gaji_pokok' => 6000000,
+            'uang_makan_per_hari' => 30000,
+        ]);
+
+        Employee::create([
+            'nama' => 'Siti Aminah',
+            'jabatan' => 'Designer',
+            'gaji_pokok' => 5500000,
+            'uang_makan_per_hari' => 25000,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('attendance.index', [
+            'month' => 8,
+            'year' => 2026,
+            'search' => 'Budi',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Budi Santoso');
+        $response->assertDontSee('Siti Aminah');
+    }
+
+    public function test_admin_can_export_excel_with_search_filter(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        Employee::create([
+            'nama' => 'Budi Santoso',
+            'jabatan' => 'Developer',
+            'gaji_pokok' => 6000000,
+            'uang_makan_per_hari' => 30000,
+        ]);
+
+        Employee::create([
+            'nama' => 'Siti Aminah',
+            'jabatan' => 'Designer',
+            'gaji_pokok' => 5500000,
+            'uang_makan_per_hari' => 25000,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('attendance.export.excel', [
+            'month' => 8,
+            'year' => 2026,
+            'search' => 'Budi',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Budi Santoso');
+        $response->assertDontSee('Siti Aminah');
+    }
 }

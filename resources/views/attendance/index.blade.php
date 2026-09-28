@@ -17,29 +17,84 @@
 @endsection
 
 @section('content')
+@php
+    $monthsList = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+    ];
+    $currentYear = (int) date('Y');
+    $startYear = min($currentYear - 5, (int)$year);
+    $endYear = max($currentYear + 3, (int)$year);
+@endphp
 <div class="bg-white shadow-sm rounded-lg border border-slate-200 overflow-hidden">
-    <div class="px-6 py-5 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-center gap-4">
-        <form action="{{ route('attendance.index') }}" method="GET" class="flex items-center gap-2">
-            <select name="month" class="rounded-md border-slate-300 text-sm py-1.5 focus:ring-primary focus:border-primary">
-                @for($m=1; $m<=12; $m++)
-                    <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
-                @endfor
-            </select>
-            <select name="year" class="rounded-md border-slate-300 text-sm py-1.5 focus:ring-primary focus:border-primary">
-                @for($y=date('Y')-1; $y<=date('Y')+1; $y++)
-                    <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                @endfor
-            </select>
-            <button type="submit" class="bg-[#1e293b] text-white px-4 py-1.5 rounded text-sm font-medium hover:bg-slate-800 transition">Pilih</button>
-        </form>
-        <div class="flex items-center gap-3 text-xs text-slate-600 font-medium flex-wrap justify-end">
-            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></span> Hadir</div>
-            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-red-100 text-red-600 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span> Sakit</div>
-            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-red-100 text-red-800 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span> S+: Sakit dengan Surat</div>
-            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold">I</span> Ijin</div>
-            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[9px] font-bold">T1</span> Telat < 1j</div>
-            <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[9px] font-bold">T2</span> Telat > 1j</div>
-            <div class="flex items-center gap-1"><span class="text-slate-400 font-bold">L:</span> Libur</div>
+    <div class="px-6 py-4 border-b border-slate-200 bg-white space-y-3">
+        <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
+            <form action="{{ route('attendance.index') }}" method="GET" class="flex flex-wrap items-center gap-2.5">
+                <!-- Month Selection -->
+                <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span class="text-xs font-semibold text-slate-500">Bulan:</span>
+                    <select name="month" class="bg-transparent text-xs font-semibold text-slate-800 border-none p-0 pr-4 focus:ring-0 cursor-pointer">
+                        @foreach($monthsList as $mNum => $mName)
+                            <option value="{{ $mNum }}" {{ (int)$month == $mNum ? 'selected' : '' }}>{{ $mName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Year Selection -->
+                <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                    <span class="text-xs font-semibold text-slate-500">Tahun:</span>
+                    <select name="year" class="bg-transparent text-xs font-semibold text-slate-800 border-none p-0 pr-4 focus:ring-0 cursor-pointer">
+                        @for($y = $startYear; $y <= $endYear; $y++)
+                            <option value="{{ $y }}" {{ (int)$year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <!-- Search Input for Employee Name/Jabatan/ID -->
+                <div class="relative min-w-[200px] sm:min-w-[240px]">
+                    <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama / posisi..." class="w-full text-xs rounded-lg border-slate-300 pl-8 pr-3 py-1.5 focus:ring-primary focus:border-primary placeholder-slate-400">
+                </div>
+
+                <!-- Search / Submit Button -->
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-[#1e293b] text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-800 transition shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <span>Cari</span>
+                </button>
+
+                @if(request()->has('search') && request('search') != '')
+                    <a href="{{ route('attendance.index', ['month' => $month, 'year' => $year]) }}" class="text-xs text-slate-500 hover:text-slate-800 font-medium px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded-md transition" title="Hapus kata kunci pencarian">
+                        ✕ Reset
+                    </a>
+                @endif
+
+                <!-- Download Buttons Beside Search -->
+                <div class="flex items-center gap-1.5 sm:ml-2 border-l border-slate-200 sm:pl-3">
+                    <a href="{{ route('attendance.export.pdf', request()->all()) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-red-200 text-xs font-medium rounded-lg text-red-700 bg-red-50 hover:bg-red-100 hover:border-red-300 transition shadow-sm" title="Download PDF untuk pencarian dan periode ini">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>PDF</span>
+                    </a>
+                    <a href="{{ route('attendance.export.excel', request()->all()) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-emerald-200 text-xs font-medium rounded-lg text-emerald-700 bg-emerald-50 hover:bg-emerald-100 hover:border-emerald-300 transition shadow-sm" title="Download Excel untuk pencarian dan periode ini">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>Excel</span>
+                    </a>
+                </div>
+            </form>
+
+            <!-- Status Legend -->
+            <div class="flex items-center gap-2.5 text-[11px] text-slate-600 font-medium flex-wrap justify-end">
+                <div class="flex items-center gap-1"><span class="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></span> Hadir</div>
+                <div class="flex items-center gap-1"><span class="w-3.5 h-3.5 rounded-full bg-red-100 text-red-600 flex items-center justify-center"><svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span> Sakit</div>
+                <div class="flex items-center gap-1"><span class="w-3.5 h-3.5 rounded-full bg-red-100 text-red-800 flex items-center justify-center"><svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span> S+: Sakit Surat</div>
+                <div class="flex items-center gap-1"><span class="w-3.5 h-3.5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[9px] font-bold">I</span> Ijin</div>
+                <div class="flex items-center gap-1"><span class="w-3.5 h-3.5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[8px] font-bold">T1</span> Telat &lt; 1j</div>
+                <div class="flex items-center gap-1"><span class="w-3.5 h-3.5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[8px] font-bold">T2</span> Telat &gt; 1j</div>
+                <div class="flex items-center gap-1"><span class="text-slate-400 font-bold">L:</span> Libur</div>
+            </div>
         </div>
     </div>
 
@@ -69,7 +124,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
-                    @foreach($employees as $employee)
+                    @forelse($employees as $employee)
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-3 py-2 border-r text-slate-500 font-mono text-[11px]">{{ str_pad($employee->id, 3, '0', STR_PAD_LEFT) }}</td>
                         <td class="px-3 py-2 border-r font-bold text-slate-800 text-xs">{{ $employee->nama }}</td>
@@ -181,7 +236,22 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="{{ count($period) + 4 }}" class="px-6 py-12 text-center text-slate-500">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg class="h-10 w-10 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <p class="text-sm font-semibold text-slate-700">Tidak ada data karyawan yang ditemukan</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Coba sesuaikan kata kunci pencarian atau reset filter.</p>
+                                @if(request('search'))
+                                    <a href="{{ route('attendance.index', ['month' => $month, 'year' => $year]) }}" class="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-md transition shadow-xs">
+                                        Reset Kata Kunci
+                                    </a>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

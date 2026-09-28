@@ -31,9 +31,20 @@ class AttendanceController extends Controller
         
         list($startDate, $endDate, $period) = $this->getAttendancePeriod($month, $year);
 
-        $employees = Employee::with(['attendances' => function($query) use ($startDate, $endDate) {
+        $employeesQuery = Employee::with(['attendances' => function($query) use ($startDate, $endDate) {
             $query->whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
-        }])->orderBy('id', 'asc')->get();
+        }])->orderBy('id', 'asc');
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $employeesQuery->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('jabatan', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
+            });
+        }
+
+        $employees = $employeesQuery->get();
 
         $ot_rates = [
             'weekday_first' => (float) \App\Models\Setting::get('lembur_weekday_jam_pertama', 30000),
@@ -134,9 +145,20 @@ class AttendanceController extends Controller
         
         list($startDate, $endDate, $period) = $this->getAttendancePeriod($month, $year);
 
-        $employees = Employee::with(['attendances' => function($query) use ($startDate, $endDate) {
+        $employeesQuery = Employee::with(['attendances' => function($query) use ($startDate, $endDate) {
             $query->whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
-        }])->orderBy('id', 'asc')->get();
+        }])->orderBy('id', 'asc');
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $employeesQuery->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('jabatan', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
+            });
+        }
+
+        $employees = $employeesQuery->get();
 
         $pdf = Pdf::loadView('attendance.pdf', compact('employees', 'month', 'year', 'period', 'startDate', 'endDate'))
                   ->setPaper('a4', 'landscape');
@@ -151,9 +173,20 @@ class AttendanceController extends Controller
         
         list($startDate, $endDate, $period) = $this->getAttendancePeriod($month, $year);
 
-        $employees = Employee::with(['attendances' => function($query) use ($startDate, $endDate) {
+        $employeesQuery = Employee::with(['attendances' => function($query) use ($startDate, $endDate) {
             $query->whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
-        }])->orderBy('id', 'asc')->get();
+        }])->orderBy('id', 'asc');
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $employeesQuery->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('jabatan', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
+            });
+        }
+
+        $employees = $employeesQuery->get();
 
         return response()
             ->view('attendance.excel', compact('employees', 'month', 'year', 'period', 'startDate', 'endDate'))
