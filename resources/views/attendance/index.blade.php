@@ -31,13 +31,13 @@
     <div class="px-6 py-4 border-b border-slate-200 bg-white">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <form action="{{ route('attendance.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
-                <select name="month" class="rounded-md border-slate-300 text-sm py-1.5 px-3 focus:ring-primary focus:border-primary text-slate-700 bg-white">
+                <select name="month" onchange="this.form.submit()" class="rounded-md border-slate-300 text-sm py-1.5 px-3 focus:ring-primary focus:border-primary text-slate-700 bg-white cursor-pointer">
                     @foreach($monthsList as $mNum => $mName)
                         <option value="{{ $mNum }}" {{ (int)$month == $mNum ? 'selected' : '' }}>{{ $mName }}</option>
                     @endforeach
                 </select>
 
-                <select name="year" class="rounded-md border-slate-300 text-sm py-1.5 px-3 focus:ring-primary focus:border-primary text-slate-700 bg-white">
+                <select name="year" onchange="this.form.submit()" class="rounded-md border-slate-300 text-sm py-1.5 px-3 focus:ring-primary focus:border-primary text-slate-700 bg-white cursor-pointer">
                     @for($y = $startYear; $y <= $endYear; $y++)
                         <option value="{{ $y }}" {{ (int)$year == $y ? 'selected' : '' }}>{{ $y }}</option>
                     @endfor
