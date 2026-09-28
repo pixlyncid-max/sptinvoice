@@ -7,12 +7,6 @@
     <button type="button" @click="$dispatch('open-daily-modal')" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark">
         Input Absensi Harian
     </button>
-    <a href="{{ route('attendance.export.pdf', request()->all()) }}" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
-        PDF
-    </a>
-    <a href="{{ route('attendance.export.excel', request()->all()) }}" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
-        Excel
-    </a>
 </div>
 @endsection
 
